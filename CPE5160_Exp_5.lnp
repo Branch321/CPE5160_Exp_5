@@ -1,0 +1,5 @@
+"main.obj",
+"sEOS.obj",
+"Blinking_Lights.obj" 
+TO "CPE5160_Exp_5" 
+RAMSIZE(256) 

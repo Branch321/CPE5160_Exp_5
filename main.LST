@@ -1,0 +1,40 @@
+C51 COMPILER V6.02  MAIN                                                                   12/01/2019 15:27:40 PAGE 1   
+
+
+C51 COMPILER V6.02, COMPILATION OF MODULE MAIN
+OBJECT MODULE PLACED IN .\main.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE .\main.c DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          /* Names: Tyler Andrews, Brennan Campbell, Tyler Tetens
+   2           * Project: Experiment 5
+   3           * Class: Cpe5160
+   4           * Professor: Mr. Younger
+   5          */
+   6          
+   7          #include "main.h"
+   8          #include "PORT.h"
+   9          #include "sEOS.h"
+  10          
+  11          void main(void) {
+  12   1          sEOS_init(1); // initialize sEOS interrupt at 1ms
+  13   1          
+  14   1          while(1) {
+  15   2              go_to_sleep(); // enter idle mode
+  16   2          }
+  17   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =     10    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =   ----    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
