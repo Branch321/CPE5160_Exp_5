@@ -29,8 +29,8 @@ Options 1,0,0  // Target 'Target 1'
  EnvBin ()
  EnvInc ()
  EnvLib ()
- EnvReg (ÿAtmel\)
- OrgReg (ÿAtmel\)
+ EnvReg (ï¿½Atmel\)
+ OrgReg (ï¿½Atmel\)
  TgStat=9
  OutDir (.\)
  OutName (CPE5160_Exp_5)
