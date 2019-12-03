@@ -2,6 +2,7 @@
 #define _BLINKING_LIGHTS_H
 
 #include "main.h"
+#include "PORT.h"
 
 // possible system states
 typedef enum {
@@ -15,12 +16,8 @@ typedef enum {
 	STATE_7
 } states_t;
 
+//void blinking_lights_isr(void);
 
-states_t SYSTEM_STATE = IDLE_STATE;
-uint32_t TIMER = 0;
-bit Button_1 = 0;
-bit Button_4 = 0;
-
-void blinking_lights_isr(void);
+void set_lights(bit green, bit amber, bit yellow, bit red);
 
 #endif

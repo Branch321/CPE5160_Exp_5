@@ -39,7 +39,7 @@ sbit P1_7 = P1^7;
 
 
 // Port 2
-sbit SW1 = P2^0;
+//sbit SW1 = P2^0;
 sbit SW2 = P2^1;
 sbit SW3 = P2^2;
 sbit SW4 = P2^3;
@@ -48,6 +48,7 @@ sbit YELLOWLED = P2^5;
 sbit AMBERLED = P2^6;
 sbit GREENLED = P2^7;
 
+// FIXME: Get rid of these below
 #define Red_LED 1<<4
 #define Yellow_LED 1<<5
 #define Amber_LED 1<<6
