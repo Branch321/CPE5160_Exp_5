@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/01/2019 15:27:40 PAGE 1   
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/02/2019 23:40:48 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE BLINKING_LIGHTS
@@ -8,196 +8,202 @@ COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE .\Blinking_Lights.c DEBUG OBJECTEXT
 stmt level    source
 
    1          #include "Blinking_Lights.h"
-   2          #include "PORT.h"
+   2          #include <stdio.h>
    3          
-   4          // Function to set lights based on input numbers
-   5          void set_lights(bit green, bit amber, bit yellow, bit red) {
-   6   1          GREENLED = green;
-   7   1          AMBERLED = amber;
-   8   1          YELLOWLED = yellow;
-   9   1          REDLED = red;
-  10   1      }
-  11          
-  12          // Function to control traffic light system state
-  13          void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
-  14   1          TF2 = 0; // clear interrupt flag
-  15   1          TIMER++; // increment timer
-  16   1      
-  17   1      	// Debounce this crap
-  18   1      	if(SW1)
-  19   1      	{
-  20   2      		Button_1 = ~Button_1;
-  21   2      	}
-  22   1      	else if(SW4)
-  23   1      	{
-  24   2      		Button_4 = ~Button_4;
-  25   2      	}
-  26   1      	switch(SYSTEM_STATE)
+   4          volatile bit Button_1 = 0;
+   5          volatile bit strobe_lights = 0;
+   6          volatile states_t SYSTEM_STATE = IDLE_STATE;
+   7          volatile b_states_t BUTTON_1_STATE = RELEASED;
+   8          volatile uint32_t TIMER = 0;
+   9          volatile bit Button_4 = 0;
+  10          volatile uint32_t TIMER_INTERVAL=1000;
+  11          sbit SW1 = P2^0;
+  12          
+  13          void set_lights(bit green, bit amber, bit yellow, bit red) {
+  14   1          GREENLED = green;
+  15   1          AMBERLED = amber;
+  16   1          YELLOWLED = yellow;
+  17   1          REDLED = red;
+  18   1      }
+  19          
+  20          
+  21          void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
+  22   1          TF2 = 0; // clear interrupt flag
+  23   1          TIMER++; // increment timer
+  24   1      	
+  25   1      	
+  26   1      	switch(BUTTON_1_STATE)
   27   1      	{
-  28   2      		// TODO: need to worry about going backwards through states in if..else statements
-  29   2      		case IDLE_STATE:
-  30   2      			set_lights(0,0,0,0);
-  31   2      			if(Button_1&&TIMER==1000)
-  32   2      			{
-  33   3      				SYSTEM_STATE = STATE_1;
-  34   3      				TIMER = 0;
-  35   3      			}
-  36   2      			else if(Button_4&&TIMER==1000)
-  37   2      			{
-  38   3      				SYSTEM_STATE = STATE_7;
-  39   3      				TIMER = 0;
-  40   3      			}
-  41   2      			else
-  42   2      			{
-  43   3      				SYSTEM_STATE = IDLE_STATE;
-  44   3      				TIMER = 0;
+  28   2       		case RELEASED:
+  29   2      			//set_lights(0,1,1,1);
+  30   2      			if(SW1 == 0)
+  31   2      			{
+  32   3      				BUTTON_1_STATE = R_EDGE;
+  33   3      			}
+  34   2      			break;
+  35   2      		case R_EDGE:
+  36   2      			//set_lights(1,0,1,1);
+  37   2      			BUTTON_1_STATE = PRESSED;
+  38   2      			break;
+  39   2      		case PRESSED:
+  40   2      			strobe_lights = 1;
+  41   2      			set_lights(1,1,0,1);
+  42   2      			if(SW1 == 1)
+  43   2      			{
+  44   3      				BUTTON_1_STATE = F_EDGE;
   45   3      			}
   46   2      			break;
-  47   2      		case STATE_1:
-  48   2      			set_lights(1,0,0,0);
-  49   2      			if(Button_1&&TIMER==1000)
-  50   2      			{
-  51   3      				SYSTEM_STATE = STATE_2;
-  52   3      				TIMER = 0;
-  53   3      			}
-  54   2      			else if(Button_4&&TIMER==1000)
-  55   2      			{
-C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/01/2019 15:27:40 PAGE 2   
+  47   2      		case F_EDGE:
+  48   2      			//set_lights(1,1,1,0);
+  49   2      			BUTTON_1_STATE = RELEASED;
+  50   2      			break;
+  51   2      	}
+  52   1      
+  53   1      	switch(SYSTEM_STATE)
+  54   1      	{
+  55   2      		case IDLE_STATE:
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/02/2019 23:40:48 PAGE 2   
 
-  56   3      				SYSTEM_STATE = IDLE_STATE;
-  57   3      				TIMER = 0;
-  58   3      			}
-  59   2      			else
-  60   2      			{
-  61   3      				SYSTEM_STATE = IDLE_STATE;
-  62   3      				TIMER = 0;
-  63   3      			}
-  64   2      			break;
-  65   2      		case STATE_2:
-  66   2      			set_lights(1,1,0,0);
-  67   2      			if(Button_1&&TIMER==1000)
+  56   2      			set_lights(1,1,1,1);
+  57   2      
+  58   2      			//strobe_lights = 1;
+  59   2      
+  60   2      
+  61   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
+  62   2      			{
+  63   3      				SYSTEM_STATE = STATE_1;
+  64   3      				set_lights(0,1,1,1);
+  65   3      				TIMER = 0;
+  66   3      			}
+  67   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
   68   2      			{
-  69   3      				SYSTEM_STATE = STATE_3;
-  70   3      				TIMER = 0;
-  71   3      			}
-  72   2      			else if(Button_4&&TIMER==1000)
-  73   2      			{
-  74   3      				SYSTEM_STATE = STATE_1;
-  75   3      				TIMER = 0;
-  76   3      			}
-  77   2      			else
-  78   2      			{
-  79   3      				SYSTEM_STATE = IDLE_STATE;
-  80   3      				TIMER = 0;
-  81   3      			}
-  82   2      			break;
-  83   2      		case STATE_3:
-  84   2      			set_lights(1,1,1,0);
-  85   2      			if(Button_1&&TIMER==1000)
-  86   2      			{
-  87   3      				SYSTEM_STATE = STATE_4;
-  88   3      				TIMER = 0;
-  89   3      			}
-  90   2      			else if(Button_4&&TIMER==1000)
-  91   2      			{
-  92   3      				SYSTEM_STATE = STATE_2;
-  93   3      				TIMER = 0;
-  94   3      			}
-  95   2      			else
-  96   2      			{
-  97   3      				SYSTEM_STATE = IDLE_STATE;
+  69   3      				SYSTEM_STATE = STATE_7;
+  70   3      				set_lights(1,1,1,0);
+  71   3      				TIMER = 0;
+  72   3      			}
+  73   2      			break;
+  74   2      		case STATE_1:
+  75   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
+  76   2      			{
+  77   3      				SYSTEM_STATE = STATE_2;
+  78   3      				set_lights(0,0,1,1);
+  79   3      				TIMER = 0;
+  80   3      			}
+  81   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
+  82   2      			{
+  83   3      				SYSTEM_STATE = IDLE_STATE;
+  84   3      				TIMER = 0;
+  85   3      			}
+  86   2      			break;
+  87   2      		case STATE_2:
+  88   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
+  89   2      			{
+  90   3      				SYSTEM_STATE = STATE_3;
+  91   3      				set_lights(0,0,0,1);
+  92   3      				TIMER = 0;
+  93   3      			}
+  94   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
+  95   2      			{
+  96   3      				SYSTEM_STATE = STATE_1;
+  97   3      				set_lights(0,1,1,1);
   98   3      				TIMER = 0;
   99   3      			}
  100   2      			break;
- 101   2      		case STATE_4:
- 102   2      			set_lights(1,1,1,1);
- 103   2      			if(Button_1&&TIMER==1000)
- 104   2      			{
- 105   3      				SYSTEM_STATE = STATE_5;
+ 101   2      		case STATE_3:
+ 102   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
+ 103   2      			{
+ 104   3      				SYSTEM_STATE = STATE_4;
+ 105   3      				set_lights(0,0,0,0);
  106   3      				TIMER = 0;
  107   3      			}
- 108   2      			else if(Button_4&&TIMER==1000)
+ 108   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
  109   2      			{
- 110   3      				SYSTEM_STATE = STATE_3;
- 111   3      				TIMER = 0;
- 112   3      			}
- 113   2      			else
- 114   2      			{
- 115   3      				SYSTEM_STATE = IDLE_STATE;
- 116   3      				TIMER = 0;
- 117   3      			}
-C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/01/2019 15:27:40 PAGE 3   
+ 110   3      				SYSTEM_STATE = STATE_2;
+ 111   3      				set_lights(0,0,1,1);
+ 112   3      				TIMER = 0;
+ 113   3      			}
+ 114   2      			break;
+ 115   2      		case STATE_4:
+ 116   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
+ 117   2      			{
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/02/2019 23:40:48 PAGE 3   
 
- 118   2      			break;
- 119   2      		case STATE_5:
- 120   2      			set_lights(0,1,1,1);
- 121   2      			if(Button_1&&TIMER==1000)
- 122   2      			{
- 123   3      				SYSTEM_STATE = STATE_5;
- 124   3      				TIMER = 0;
- 125   3      			}
- 126   2      			else if(Button_4&&TIMER==1000)
- 127   2      			{
- 128   3      			 	SYSTEM_STATE = STATE_4;
- 129   3      				TIMER = 0;
- 130   3      			}
- 131   2      			else
- 132   2      			{
- 133   3      				SYSTEM_STATE = IDLE_STATE;
+ 118   3      				SYSTEM_STATE = STATE_5;
+ 119   3      				set_lights(1,0,0,0);
+ 120   3      				TIMER = 0;
+ 121   3      			}
+ 122   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
+ 123   2      			{
+ 124   3      				SYSTEM_STATE = STATE_3;
+ 125   3      				set_lights(0,0,0,1);
+ 126   3      				TIMER = 0;
+ 127   3      			}
+ 128   2      			break;
+ 129   2      		case STATE_5:
+ 130   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
+ 131   2      			{
+ 132   3      				SYSTEM_STATE = STATE_6;
+ 133   3      				set_lights(1,1,0,0);
  134   3      				TIMER = 0;
  135   3      			}
- 136   2      			break;
- 137   2      		case STATE_6:
- 138   2      			set_lights(0,0,1,1);
- 139   2      			if(Button_1&&TIMER==1000)
- 140   2      			{
- 141   3      				SYSTEM_STATE = STATE_7;
- 142   3      				TIMER = 0;
- 143   3      			}
- 144   2      			else if(Button_4&&TIMER==1000)
+ 136   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
+ 137   2      			{
+ 138   3      			 	SYSTEM_STATE = STATE_4;
+ 139   3      				set_lights(0,0,0,0);
+ 140   3      				TIMER = 0;
+ 141   3      			}
+ 142   2      			break;
+ 143   2      		case STATE_6:		
+ 144   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
  145   2      			{
- 146   3      				SYSTEM_STATE = STATE_5;
- 147   3      				TIMER = 0;
- 148   3      			}
- 149   2      			else
- 150   2      			{
- 151   3      				SYSTEM_STATE = IDLE_STATE;
- 152   3      				TIMER = 0;
- 153   3      			}
- 154   2      			break;
- 155   2      		case STATE_7:
- 156   2      			set_lights(0,0,0,1);
- 157   2      			if(Button_1&&TIMER==1000)
- 158   2      			{
- 159   3      				SYSTEM_STATE = IDLE_STATE;
- 160   3      				TIMER = 0;
- 161   3      			}
- 162   2      			else if(Button_4&&TIMER==1000)
- 163   2      			{
- 164   3      				SYSTEM_STATE = STATE_6;
- 165   3      				TIMER = 0;
- 166   3      			}
- 167   2      			else
- 168   2      			{
- 169   3      				SYSTEM_STATE = IDLE_STATE;
- 170   3      				TIMER = 0;
- 171   3      			}
- 172   2      			break;
- 173   2      	}
- 174   1      }
+ 146   3      				SYSTEM_STATE = STATE_7;
+ 147   3      				set_lights(1,1,1,0);
+ 148   3      				TIMER = 0;
+ 149   3      			}
+ 150   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
+ 151   2      			{
+ 152   3      				SYSTEM_STATE = STATE_5;
+ 153   3      				set_lights(1,0,0,0);
+ 154   3      				TIMER = 0;
+ 155   3      			}
+ 156   2      			break;
+ 157   2      		case STATE_7:	
+ 158   2      			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
+ 159   2      			{
+ 160   3      				SYSTEM_STATE = IDLE_STATE;
+ 161   3      				set_lights(1,1,1,1);
+ 162   3      				TIMER = 0;
+ 163   3      			}
+ 164   2      			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
+ 165   2      			{
+ 166   3      				SYSTEM_STATE = STATE_6;
+ 167   3      				set_lights(1,1,0,0);
+ 168   3      				TIMER = 0;
+ 169   3      			}
+ 170   2      			strobe_lights = 0;
+ 171   2      			break;
+ 172   2      	}
+ 173   1      }
+ 174          
+ 175          
+ 176          void Button_State_Change(b_states_t button_state)
+ 177          {
+ 178   1      
+ 179   1      }
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/02/2019 23:40:48 PAGE 4   
+
+*** WARNING C280 IN LINE 176 OF .\BLINKING_LIGHTS.C: 'button_state': unreferenced local variable
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    970    ----
+   CODE SIZE        =    999    ----
    CONSTANT SIZE    =   ----    ----
-C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/01/2019 15:27:40 PAGE 4   
-
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =      5    ----
+   DATA SIZE        =     10       1
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =      2       4
+   BIT SIZE         =      3       4
 END OF MODULE INFORMATION.
 
 
-C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
+C51 COMPILATION COMPLETE.  1 WARNING(S),  0 ERROR(S)
