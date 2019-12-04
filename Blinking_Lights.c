@@ -35,14 +35,17 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		if(SW1_p->SW_state==pressed)
 		{
 			SYSTEM_STATE = STATE_1_L_to_R;
+			TIMER = 0;
 		}
 		else if(SW4_p->SW_state==pressed)
 		{
-			SYSTEM_STATE = STATE_1_R_to_L;	
-		}
+			SYSTEM_STATE = STATE_1_R_to_L;
+            TIMER = 0;
+        }
 		else if(SW2_p->SW_state==pressed || SW3_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = TIMER_INCREMENT_MODE;
+			TIMER = 0;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_1_L_to_R)
