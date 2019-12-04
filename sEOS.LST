@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  SEOS                                                                   12/04/2019 02:39:19 PAGE 1   
+C51 COMPILER V6.02  SEOS                                                                   12/04/2019 04:53:56 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE SEOS
@@ -36,11 +36,11 @@ stmt level    source
   27   1          reload_8L = (uint8_t)(reload_16 % 256);
   28   1          
   29   1          // load timer 2 high byte
-  30   1          //TH2 = reload_8H;
+  30   1          TH2 = reload_8H;
   31   1          RCAP2H = reload_8H;
   32   1          
   33   1          // load timer 2 low byte
-  34   1          //TL2 = reload_8L;
+  34   1          TL2 = reload_8L;
   35   1          RCAP2L = reload_8L;
   36   1          
   37   1      	TF2 = 0;
@@ -55,14 +55,14 @@ stmt level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     53    ----
+   CODE SIZE        =     57    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
    DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-C51 COMPILER V6.02  SEOS                                                                   12/04/2019 02:39:19 PAGE 2   
+C51 COMPILER V6.02  SEOS                                                                   12/04/2019 04:53:56 PAGE 2   
 
 END OF MODULE INFORMATION.
 

@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/04/2019 02:39:19 PAGE 1   
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/04/2019 04:53:56 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE BLINKING_LIGHTS
@@ -13,149 +13,202 @@ stmt level    source
    4          #include <stdio.h>
    5          
    6          volatile states_t SYSTEM_STATE = IDLE_STATE;
-   7          //overall_state TOTAL_STATE = NO_MODE;
-   8          
-   9          volatile uint32_t TIMER_INTERVAL_DELAY = 660;
-  10          
-  11          uint8_t strobe_lights = 0;
-  12          uint32_t TIMER = 0;
-  13          
-  14          void set_lights(uint8_t light_config) {
-  15   1      	light_config = light_config << 4;
-  16   1      	P2 = light_config|0x0F;
-  17   1      }
+   7          volatile uint32_t TIMER_INTERVAL_DELAY = 660;
+   8          volatile uint32_t TIMER = 0;
+   9          volatile bit strobe_forward = 0;
+  10          volatile bit strobe_backward = 0;
+  11          
+  12          void set_lights(uint8_t light_config) {
+  13   1      	light_config = light_config << 4;
+  14   1      	P2 = light_config|0x0F;
+  15   1      }
+  16          
+  17          SW_values_t * SW1_p, *SW2_p, *SW3_p, *SW4_p;
   18          
-  19          SW_values_t * SW1_p, *SW2_p, *SW3_p, *SW4_p;
-  20          
-  21          void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
-  22   1      	
-  23   1      	TF2=0;
-  24   1      	SW1_p = Return_SW1_address();
-  25   1      	SW2_p = Return_SW2_address();
-  26   1      	SW3_p = Return_SW3_address();
-  27   1      	SW4_p = Return_SW4_address();
-  28   1          TIMER++; // increment timer
-  29   1      
-  30   1      	Read_Switch(SW1_p);
-  31   1      	Read_Switch(SW2_p);
-  32   1      	Read_Switch(SW3_p);
-  33   1      	Read_Switch(SW4_p);
-  34   1      	
-  35   1      	if(TIMER==TIMER_INTERVAL_DELAY)
-  36   1      	{
-  37   2      		LED_State_Change();
-  38   2      		TIMER=0;
-  39   2      	}
-  40   1      }
-  41          
-  42          void LED_State_Change(void)
-  43          {
-  44   1      	if(SYSTEM_STATE == IDLE_STATE)
-  45   1      	{
-  46   2      		set_lights(15);
-  47   2      		if(SW2_p->SW_state==pressed||SW3_p->SW_state==pressed)
-  48   2      		{
-  49   3      			SYSTEM_STATE=TIMER_INCREMENT_MODE;
-  50   3      		}
-  51   2      		/*
-  52   2      		else if(SW1_p->SW_state==pressed)
-  53   2      		{
-  54   2      			SYSTEM_STATE = STATE_1;
-  55   2      			set_lights(0x7F);
-C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/04/2019 02:39:19 PAGE 2   
+  19          void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
+  20   1      	TF2=0;
+  21   1      	SW1_p = Return_SW1_address();
+  22   1      	SW2_p = Return_SW2_address();
+  23   1      	SW3_p = Return_SW3_address();
+  24   1      	SW4_p = Return_SW4_address();
+  25   1          TIMER++;
+  26   1      
+  27   1      	Read_Switch(SW1_p);
+  28   1      	Read_Switch(SW2_p);
+  29   1      	Read_Switch(SW3_p);
+  30   1      	Read_Switch(SW4_p);
+  31   1      	
+  32   1      	if(SW2_p->SW_state==pressed||SW3_p->SW_state==pressed)
+  33   1      	{
+  34   2      		SYSTEM_STATE=TIMER_INCREMENT_MODE;
+  35   2      	}
+  36   1      	else if(SW1_p->SW_state==pressed)
+  37   1      	{
+  38   2      		strobe_forward = ~strobe_forward;
+  39   2      		SYSTEM_STATE= IDLE_STATE;
+  40   2      	}	
+  41   1      	else if(SW4_p->SW_state==pressed)
+  42   1      	{
+  43   2      		strobe_backward = ~strobe_backward;
+  44   2      		SYSTEM_STATE= IDLE_STATE;
+  45   2      	}
+  46   1      	else if((SYSTEM_STATE == IDLE_STATE&&TIMER>=TIMER_INTERVAL_DELAY))
+  47   1      	{
+  48   2      		set_lights(15);
+  49   2      		if(strobe_forward==1)
+  50   2      		{
+  51   3      			SYSTEM_STATE = STATE_1;
+  52   3      			TIMER=0;
+  53   3      		}
+  54   2      		else if(strobe_backward==1)
+  55   2      		{
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/04/2019 04:53:56 PAGE 2   
 
-  56   2      			TIMER = 0;
-  57   2      		}	*/		
-  58   2      	}
-  59   1      	/*
-  60   1      	else if(SYSTEM_STATE==STATE_1)
+  56   3      			SYSTEM_STATE = STATE_7;
+  57   3      			TIMER=0;
+  58   3      		}
+  59   2      	}
+  60   1      	else if(SYSTEM_STATE==STATE_1&&TIMER>=TIMER_INTERVAL_DELAY)
   61   1      	{
-  62   1      
-  63   1      		SYSTEM_STATE = STATE_2;
-  64   1      		set_lights(0x3F);
-  65   1      		TIMER = 0;
-  66   1      	}
-  67   1      	else if(SYSTEM_STATE==STATE_2)
-  68   1      	{
-  69   1      		SYSTEM_STATE = STATE_3;
-  70   1      		set_lights(0x1F);
-  71   1      		TIMER = 0;
-  72   1      	}
-  73   1      	else if(SYSTEM_STATE==STATE_3)
-  74   1      	{
-  75   1      		SYSTEM_STATE = STATE_4;
-  76   1      		set_lights(0x0F);
-  77   1      		TIMER = 0;
-  78   1      	}
-  79   1      	else if(SYSTEM_STATE==STATE_4)
-  80   1      	{
-  81   1      
-  82   1      		SYSTEM_STATE = STATE_5;
-  83   1      		set_lights(0x8F);
-  84   1      		TIMER = 0;
-  85   1      	}
-  86   1      	else if(SYSTEM_STATE==STATE_5)
-  87   1      	{
-  88   1      		SYSTEM_STATE = STATE_6;
-  89   1      		set_lights(0xCF);
-  90   1      		TIMER = 0;
-  91   1      	}
-  92   1      	else if(SYSTEM_STATE==STATE_6)
-  93   1      	{
-  94   1      
-  95   1      		SYSTEM_STATE = STATE_7;
-  96   1      		set_lights(0xEF);
-  97   1      		TIMER = 0;
-  98   1      
-  99   1      	}
- 100   1      	else if(SYSTEM_STATE==STATE_7)
- 101   1      	{
- 102   1      		SYSTEM_STATE = IDLE_STATE;
- 103   1      		set_lights(0xFF);
- 104   1      		TIMER = 0;
- 105   1      	}
- 106   1      	*/
- 107   1      	else if(SYSTEM_STATE==TIMER_INCREMENT_MODE)
- 108   1      	{
- 109   2      	    if(SW2_p->SW_state==pressed)
- 110   2      		{
- 111   3      			//set_lights(0x00);
- 112   3      			TIMER_INTERVAL_DELAY+=60;
- 113   3      			if(TIMER_INTERVAL_DELAY>=900)
- 114   3      			{
- 115   4      				TIMER_INTERVAL_DELAY=900;
- 116   4      			}
- 117   3      			set_lights(~((uint8_t) TIMER_INTERVAL_DELAY/60));
-C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/04/2019 02:39:19 PAGE 3   
+  62   2      		set_lights(7);
+  63   2      		if(strobe_forward==1)
+  64   2      		{
+  65   3      			SYSTEM_STATE = STATE_2;
+  66   3      			TIMER=0;
+  67   3      		}
+  68   2      		else if(strobe_backward==1)
+  69   2      		{
+  70   3      			SYSTEM_STATE = IDLE_STATE;
+  71   3      			TIMER=0;
+  72   3      		}
+  73   2      	}
+  74   1      	else if(SYSTEM_STATE==STATE_2&&TIMER>=TIMER_INTERVAL_DELAY)
+  75   1      	{		
+  76   2      		set_lights(3);
+  77   2      		if(strobe_forward==1)
+  78   2      		{
+  79   3      			SYSTEM_STATE = STATE_3;
+  80   3      			TIMER=0;
+  81   3      		}
+  82   2      		else if(strobe_backward==1)
+  83   2      		{
+  84   3      			SYSTEM_STATE = STATE_1;
+  85   3      			TIMER=0;
+  86   3      		}
+  87   2      	}
+  88   1      	else if(SYSTEM_STATE==STATE_3&&TIMER>=TIMER_INTERVAL_DELAY)
+  89   1      	{
+  90   2      		set_lights(1);
+  91   2      		if(strobe_forward==1)
+  92   2      		{
+  93   3      			SYSTEM_STATE = STATE_4;
+  94   3      			TIMER=0;
+  95   3      		}
+  96   2      		else if(strobe_backward==1)
+  97   2      		{
+  98   3      			SYSTEM_STATE = STATE_2;
+  99   3      			TIMER=0;
+ 100   3      		}
+ 101   2      	}
+ 102   1      	else if(SYSTEM_STATE==STATE_4&&TIMER>=TIMER_INTERVAL_DELAY)
+ 103   1      	{
+ 104   2      		set_lights(0);
+ 105   2      		if(strobe_forward==1)
+ 106   2      		{
+ 107   3      			SYSTEM_STATE = STATE_5;
+ 108   3      			TIMER=0;
+ 109   3      		}
+ 110   2      		else if(strobe_backward==1)
+ 111   2      		{
+ 112   3      			SYSTEM_STATE = STATE_3;
+ 113   3      			TIMER=0;
+ 114   3      		}
+ 115   2      	}
+ 116   1      	else if(SYSTEM_STATE==STATE_5&&TIMER>=TIMER_INTERVAL_DELAY)
+ 117   1      	{
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/04/2019 04:53:56 PAGE 3   
 
- 118   3      		}
- 119   2      		else if(SW3_p->SW_state==pressed)
+ 118   2      		set_lights(8);
+ 119   2      		if(strobe_forward==1)
  120   2      		{
- 121   3      			//set_lights(0x00);
- 122   3      			TIMER_INTERVAL_DELAY-=60;
- 123   3      			if(TIMER_INTERVAL_DELAY<60)
- 124   3      			{
- 125   4      				TIMER_INTERVAL_DELAY=60;
- 126   4      			}
- 127   3      			set_lights(~((uint8_t) TIMER_INTERVAL_DELAY/60));
+ 121   3      			SYSTEM_STATE = STATE_6;
+ 122   3      			TIMER=0;
+ 123   3      		}
+ 124   2      		else if(strobe_backward==1)
+ 125   2      		{
+ 126   3      			SYSTEM_STATE = STATE_4;
+ 127   3      			TIMER=0;
  128   3      		}
- 129   2      		else if(SW1_p==pressed||SW4_p==pressed)
- 130   2      		{
- 131   3      			SYSTEM_STATE = IDLE_STATE;
- 132   3      		}
- 133   2      	}
- 134   1      }
- 135          
+ 129   2      	}
+ 130   1      	else if(SYSTEM_STATE==STATE_6&&TIMER>=TIMER_INTERVAL_DELAY)
+ 131   1      	{
+ 132   2      		set_lights(0xC);
+ 133   2      		if(strobe_forward==1)
+ 134   2      		{
+ 135   3      			SYSTEM_STATE = STATE_7;
+ 136   3      			TIMER=0;
+ 137   3      		}
+ 138   2      		else if(strobe_backward==1)
+ 139   2      		{
+ 140   3      			SYSTEM_STATE = STATE_5;
+ 141   3      			TIMER=0;
+ 142   3      		}
+ 143   2      	}
+ 144   1      	else if(SYSTEM_STATE==STATE_7&&TIMER>=TIMER_INTERVAL_DELAY)
+ 145   1      	{
+ 146   2      		set_lights(0xE);
+ 147   2      		if(strobe_forward==1)
+ 148   2      		{
+ 149   3      			SYSTEM_STATE = IDLE_STATE;
+ 150   3      			TIMER=0;
+ 151   3      		}
+ 152   2      		else if(strobe_backward==1)
+ 153   2      		{
+ 154   3      			SYSTEM_STATE = STATE_6;
+ 155   3      			TIMER=0;
+ 156   3      		}
+ 157   2      	}
+ 158   1      	else if(SYSTEM_STATE==TIMER_INCREMENT_MODE)
+ 159   1      	{
+ 160   2      		set_lights(0x00);
+ 161   2      	    if(SW2_p->SW_state==pressed)
+ 162   2      		{
+ 163   3      			TIMER_INTERVAL_DELAY+=60;
+ 164   3      			if(TIMER_INTERVAL_DELAY>=900)
+ 165   3      			{
+ 166   4      				TIMER_INTERVAL_DELAY=900;
+ 167   4      			}
+ 168   3      			set_lights(~((uint8_t) TIMER_INTERVAL_DELAY/60));
+ 169   3      		}
+ 170   2      		else if(SW3_p->SW_state==pressed)
+ 171   2      		{
+ 172   3      			TIMER_INTERVAL_DELAY-=60;
+ 173   3      			if(TIMER_INTERVAL_DELAY<60)
+ 174   3      			{
+ 175   4      				TIMER_INTERVAL_DELAY=60;
+ 176   4      			}
+ 177   3      			set_lights(~((uint8_t) TIMER_INTERVAL_DELAY/60));
+ 178   3      		}
+ 179   2      		else if(SW1_p==pressed||SW4_p==pressed)
+C51 COMPILER V6.02  BLINKING_LIGHTS                                                        12/04/2019 04:53:56 PAGE 4   
+
+ 180   2      		{
+ 181   3      			SYSTEM_STATE = IDLE_STATE;
+ 182   3      		}
+ 183   2      	}
+ 184   1      }
+ 185          
+ 186          
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    428    ----
+   CODE SIZE        =   1062    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =     22    ----
+   DATA SIZE        =     21    ----
    IDATA SIZE       =   ----    ----
-   BIT SIZE         =   ----    ----
+   BIT SIZE         =      2    ----
 END OF MODULE INFORMATION.
 
 

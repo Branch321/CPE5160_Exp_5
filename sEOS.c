@@ -27,11 +27,11 @@ void sEOS_init(uint8_t interval) {
     reload_8L = (uint8_t)(reload_16 % 256);
     
     // load timer 2 high byte
-    //TH2 = reload_8H;
+    TH2 = reload_8H;
     RCAP2H = reload_8H;
     
     // load timer 2 low byte
-    //TL2 = reload_8L;
+    TL2 = reload_8L;
     RCAP2L = reload_8L;
     
 	TF2 = 0;

@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  MAIN                                                                   12/04/2019 02:39:18 PAGE 1   
+C51 COMPILER V6.02  MAIN                                                                   12/04/2019 04:53:55 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE MAIN
@@ -22,14 +22,18 @@ stmt level    source
   13          void main(void) {
   14   1          sEOS_init(1); // initialize sEOS interrupt at 1ms
   15   1      	Switch_Init();
-  16   1          while(1) {
-  17   2              go_to_sleep(); // enter idle mode
-  18   2          }
-  19   1      }
+  16   1      	SW1=1;
+  17   1      	SW2=1;
+  18   1      	SW3=1;
+  19   1      	SW4=1;
+  20   1          while(1) {
+  21   2              go_to_sleep(); // enter idle mode
+  22   2          }
+  23   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     13    ----
+   CODE SIZE        =     21    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

@@ -13,6 +13,8 @@ File 1,1,<.\sEOS.c><sEOS.c>
 File 1,5,<.\sEOS.h><sEOS.h>
 File 1,1,<.\Blinking_Lights.c><Blinking_Lights.c>
 File 1,5,<.\Blinking_Lights.h><Blinking_Lights.h>
+File 1,1,<.\Buttons.c><Buttons.c>
+File 1,5,<.\Buttons.h><Buttons.h>
 
 
 Options 1,0,0  // Target 'Target 1'

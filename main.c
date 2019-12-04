@@ -13,6 +13,10 @@
 void main(void) {
     sEOS_init(1); // initialize sEOS interrupt at 1ms
 	Switch_Init();
+	SW1=1;
+	SW2=1;
+	SW3=1;
+	SW4=1;
     while(1) {
         go_to_sleep(); // enter idle mode
     }

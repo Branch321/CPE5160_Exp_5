@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 02:39:19 PAGE 1   
+C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 04:53:56 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE BUTTONS
@@ -62,7 +62,7 @@ stmt level    source
   53   1      	{
   54   2      		SW_input_p->debounce_time+=interval;
   55   2      		if(SW_input_p->debounce_time>=debounce_timer)
-C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 02:39:19 PAGE 2   
+C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 04:53:56 PAGE 2   
 
   56   2      		{
   57   3      			if((P2&SW_input_p->SW_mask)==0)

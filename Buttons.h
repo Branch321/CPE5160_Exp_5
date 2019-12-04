@@ -5,7 +5,7 @@
 
 #define interval 1
 //#define Input_Port P2
-#define debounce_timer 100
+#define debounce_timer 20
 
 typedef enum{
 	not_pressed,
