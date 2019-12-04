@@ -13,8 +13,10 @@ typedef enum {
 	STATE_4,
 	STATE_5,
 	STATE_6,
-	STATE_7
+	STATE_7,
+	TIMER_INCREMENT_MODE
 } states_t;
+
 
 typedef enum {
 	RELEASED,
@@ -23,11 +25,8 @@ typedef enum {
 	F_EDGE
 } b_states_t;
 
-//void blinking_lights_isr(void);
+void LED_State_Change();
 
-void set_lights(bit green, bit amber, bit yellow, bit red);
-
-
-void Button_State_Change(b_states_t button_state);
+void set_lights(uint8_t light_config);
 
 #endif

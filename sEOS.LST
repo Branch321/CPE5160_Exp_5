@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  SEOS                                                                   12/02/2019 23:40:48 PAGE 1   
+C51 COMPILER V6.02  SEOS                                                                   12/04/2019 02:39:19 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE SEOS
@@ -18,56 +18,53 @@ stmt level    source
    9          #include "main.h"
   10          
   11          void sEOS_init(uint8_t interval) {
-  12   1          uint32_t increments;
+  12   1          //uint32_t increments;
   13   1          uint16_t reload_16;
   14   1          uint8_t reload_8H;
   15   1      	uint8_t reload_8L;
   16   1      
-  17   1          T2CON = 0x04; // load timer 2 control register
-  18   1          
-  19   1          // number of timer increments required (max 65536)
-  20   1          increments = ((uint32_t)interval * (OSC_FREQ/1000)) / (uint32_t)OSC_PER_INST;
-  21   1          
-  22   1          reload_16 = (uint16_t)(65536UL - increments); // 16 bit reload value
-  23   1          
-  24   1          // 8 bit reload values
-  25   1          reload_8H = (uint8_t)(reload_16 / 256);
-  26   1          reload_8L = (uint8_t)(reload_16 % 256);
-  27   1          
-  28   1          // load timer 2 high byte
-  29   1          TH2 = reload_8H;
-  30   1          RCAP2H = reload_8H;
-  31   1          
-  32   1          // load timer 2 low byte
-  33   1          TL2 = reload_8L;
-  34   1          RCAP2L = reload_8L;
-  35   1          
-  36   1          ET2 = 1; // enable timer 2 interrupt
-  37   1          TR2 = 1; // start timer 2 interrupt
-  38   1          
+  17   1          //T2CON = 0x04; // load timer 2 control register
+  18   1      	T2CON=0;
+  19   1          
+  20   1          // number of timer increments required (max 65536)
+  21   1          //increments = ((uint32_t)interval * (OSC_FREQ/1000)) / (uint32_t)OSC_PER_INST;
+  22   1          
+  23   1          reload_16 = (uint16_t)(65536UL - ((OSC_FREQ*interval)/(OSC_PER_INST*1000UL))); // 16 bit reload value
+  24   1          
+  25   1          // 8 bit reload values
+  26   1          reload_8H = (uint8_t)(reload_16 / 256);
+  27   1          reload_8L = (uint8_t)(reload_16 % 256);
+  28   1          
+  29   1          // load timer 2 high byte
+  30   1          //TH2 = reload_8H;
+  31   1          RCAP2H = reload_8H;
+  32   1          
+  33   1          // load timer 2 low byte
+  34   1          //TL2 = reload_8L;
+  35   1          RCAP2L = reload_8L;
+  36   1          
+  37   1      	TF2 = 0;
+  38   1          ET2 = 1; // enable timer 2 interrupt
   39   1          EA = 1; // enable interrupts globally
-  40   1      }
-  41          
-  42          void go_to_sleep(void) {
-  43   1          PCON |= 0x01; // enter idle mode
-  44   1      }
+  40   1      	TR2 = 1; // start timer 2 interrupt
+  41   1      }
+  42          
+  43          void go_to_sleep(void) {
+  44   1          PCON |= 0x01; // enter idle mode
+  45   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     61    ----
+   CODE SIZE        =     53    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----
-   DATA SIZE        =   ----       4
+   DATA SIZE        =   ----    ----
    IDATA SIZE       =   ----    ----
    BIT SIZE         =   ----    ----
-END OF MODULE INFORMATION.
+C51 COMPILER V6.02  SEOS                                                                   12/04/2019 02:39:19 PAGE 2   
 
-<<<<<<< HEAD
-C51 COMPILER V6.02  SEOS                                                                   12/02/2019 23:40:48 PAGE 2   
-=======
-C51 COMPILER V6.02  SEOS                                                                   12/01/2019 21:20:24 PAGE 2   
->>>>>>> 8d616598d43c75faff179e426490df95c2bc826a
+END OF MODULE INFORMATION.
 
 
 C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)

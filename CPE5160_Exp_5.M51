@@ -1,8 +1,8 @@
-BL51 BANKED LINKER/LOCATER V4.02                                                        12/02/2019  23:40:49  PAGE 1
+BL51 BANKED LINKER/LOCATER V4.02                                                        12/04/2019  02:39:20  PAGE 1
 
 
 BL51 BANKED LINKER/LOCATER V4.02, INVOKED BY:
-C:\KEIL\C51\BIN\BL51.EXE main.obj, sEOS.obj, Blinking_Lights.obj TO CPE5160_Exp_5 RAMSIZE (256)
+C:\KEIL\C51\BIN\BL51.EXE main.obj, sEOS.obj, Blinking_Lights.obj, Buttons.obj TO CPE5160_Exp_5 RAMSIZE (256)
 
 
 MEMORY MODEL: SMALL
@@ -12,7 +12,12 @@ INPUT MODULES INCLUDED:
   main.obj (MAIN)
   sEOS.obj (SEOS)
   Blinking_Lights.obj (BLINKING_LIGHTS)
+  Buttons.obj (BUTTONS)
   C:\KEIL\C51\LIB\C51S.LIB (?C_STARTUP)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CLDPTR)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CLDOPTR)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CILDOPTR)
+  C:\KEIL\C51\LIB\C51S.LIB (?C?CSTOPTR)
   C:\KEIL\C51\LIB\C51S.LIB (?C?LMUL)
   C:\KEIL\C51\LIB\C51S.LIB (?C?ULDIV)
   C:\KEIL\C51\LIB\C51S.LIB (?C?ULCMP)
@@ -27,56 +32,62 @@ LINK MAP OF MODULE:  CPE5160_Exp_5 (MAIN)
 
             * * * * * * *   D A T A   M E M O R Y   * * * * * * *
             REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
-            DATA    0008H     000AH     UNIT         ?DT?BLINKING_LIGHTS
-            DATA    0012H     0004H     UNIT         _DATA_GROUP_
-            DATA    0016H     0001H     UNIT         ?DT?_BUTTON_STATE_CHANGE?BLINKING_LIGHTS
-                    0017H     0009H                  *** GAP ***
-            BIT     0020H.0   0000H.4   UNIT         _BIT_GROUP_
-            BIT     0020H.4   0000H.3   UNIT         ?BI?BLINKING_LIGHTS
-                    0020H.7   0000H.1                *** GAP ***
-            IDATA   0021H     0001H     UNIT         ?STACK
+            DATA    0008H     0016H     UNIT         ?DT?BLINKING_LIGHTS
+            DATA    001EH     000CH     UNIT         ?DT?BUTTONS
+            IDATA   002AH     0001H     UNIT         ?STACK
 
             * * * * * * *   C O D E   M E M O R Y   * * * * * * *
             CODE    0000H     0003H     ABSOLUTE     
-            CODE    0003H     001CH     UNIT         ?PR?SET_LIGHTS?BLINKING_LIGHTS
-            CODE    001FH     000AH     UNIT         ?PR?MAIN?MAIN
-                    0029H     0002H                  *** GAP ***
+            CODE    0003H     001EH     UNIT         ?PR?SWITCH_INIT?BUTTONS
+            CODE    0021H     0007H     UNIT         ?PR?RETURN_SW1_ADDRESS?BUTTONS
+                    0028H     0003H                  *** GAP ***
             CODE    002BH     0003H     ABSOLUTE     
-            CODE    002EH     03C8H     UNIT         ?PR?BLINKING_LIGHTS_ISR?BLINKING_LIGHTS
-            CODE    03F6H     012EH     UNIT         ?C?LIB_CODE
-            CODE    0524H     008CH     UNIT         ?C_C51STARTUP
-            CODE    05B0H     0039H     UNIT         ?PR?_SEOS_INIT?SEOS
-            CODE    05E9H     0019H     UNIT         ?C_INITSEG
-            CODE    0602H     0004H     UNIT         ?PR?GO_TO_SLEEP?SEOS
-            CODE    0606H     0003H     UNIT         ?PR?_BUTTON_STATE_CHANGE?BLINKING_LIGHTS
+            CODE    002EH     01C9H     UNIT         ?C?LIB_CODE
+            CODE    01F7H     00DDH     UNIT         ?PR?LED_STATE_CHANGE?BLINKING_LIGHTS
+            CODE    02D4H     00BCH     UNIT         ?PR?BLINKING_LIGHTS_ISR?BLINKING_LIGHTS
+            CODE    0390H     0093H     UNIT         ?PR?_READ_SWITCH?BUTTONS
+            CODE    0423H     008CH     UNIT         ?C_C51STARTUP
+            CODE    04AFH     0031H     UNIT         ?PR?_SEOS_INIT?SEOS
+            CODE    04E0H     0013H     UNIT         ?PR?_SET_LIGHTS?BLINKING_LIGHTS
+            CODE    04F3H     0013H     UNIT         ?C_INITSEG
+            CODE    0506H     000DH     UNIT         ?PR?MAIN?MAIN
+            CODE    0513H     0007H     UNIT         ?PR?RETURN_SW2_ADDRESS?BUTTONS
+            CODE    051AH     0007H     UNIT         ?PR?RETURN_SW3_ADDRESS?BUTTONS
+            CODE    0521H     0007H     UNIT         ?PR?RETURN_SW4_ADDRESS?BUTTONS
+            CODE    0528H     0004H     UNIT         ?PR?GO_TO_SLEEP?SEOS
 
 
 
 OVERLAY MAP OF MODULE:   CPE5160_Exp_5 (MAIN)
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 2
 
 
-SEGMENT                                             BIT_GROUP          DATA_GROUP 
-  +--> CALLED SEGMENT                            START    LENGTH     START    LENGTH
-------------------------------------------------------------------------------------
-?PR?BLINKING_LIGHTS_ISR?BLINKING_LIGHTS          -----    -----      -----    -----
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 2
 
 
-  +--> ?PR?SET_LIGHTS?BLINKING_LIGHTS
+SEGMENT
+  +--> CALLED SEGMENT
+---------------------
+?PR?BLINKING_LIGHTS_ISR?BLINKING_LIGHTS
+  +--> ?PR?RETURN_SW1_ADDRESS?BUTTONS
+  +--> ?PR?RETURN_SW2_ADDRESS?BUTTONS
+  +--> ?PR?RETURN_SW3_ADDRESS?BUTTONS
+  +--> ?PR?RETURN_SW4_ADDRESS?BUTTONS
+  +--> ?PR?_READ_SWITCH?BUTTONS
+  +--> ?PR?LED_STATE_CHANGE?BLINKING_LIGHTS
 
-?PR?SET_LIGHTS?BLINKING_LIGHTS                   0020H.0  0000H.4    -----    -----
+?PR?LED_STATE_CHANGE?BLINKING_LIGHTS
+  +--> ?PR?_SET_LIGHTS?BLINKING_LIGHTS
 
 *** NEW ROOT ***************************************************
 
-?C_C51STARTUP                                    -----    -----      -----    -----
+?C_C51STARTUP
   +--> ?PR?MAIN?MAIN
   +--> ?C_INITSEG
 
-?PR?MAIN?MAIN                                    -----    -----      -----    -----
+?PR?MAIN?MAIN
   +--> ?PR?_SEOS_INIT?SEOS
+  +--> ?PR?SWITCH_INIT?BUTTONS
   +--> ?PR?GO_TO_SLEEP?SEOS
-
-?PR?_SEOS_INIT?SEOS                              -----    -----      0012H    0004H
 
 
 
@@ -108,6 +119,9 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00B0H.3       PUBLIC        nINT1
   D:00A8H         PUBLIC        IEN0
   B:00B0H.0       PUBLIC        RxD
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 3
+
+
   B:0090H.0       PUBLIC        P1_0
   B:00B0H.1       PUBLIC        TxD
   B:0090H.3       PUBLIC        CEX0
@@ -119,9 +133,6 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00B0H.2       PUBLIC        P3_2
   B:0090H.4       PUBLIC        P1_4
   B:00D8H.6       PUBLIC        CR
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 3
-
-
   B:00B0H.3       PUBLIC        P3_3
   B:0090H.5       PUBLIC        P1_5
   B:00C8H.6       PUBLIC        EXF2
@@ -144,7 +155,7 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00D0H.2       PUBLIC        OV
   B:0090H.1       PUBLIC        SS
   B:00B8H.2       PUBLIC        PX1L
-  C:001FH         PUBLIC        main
+  C:0506H         PUBLIC        main
   B:00C8H.5       PUBLIC        RCLK
   B:00C8H.4       PUBLIC        TCLK
   B:00B8H.6       PUBLIC        PPCL
@@ -168,6 +179,9 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:0088H.1       PUBLIC        IE0
   B:00A0H.6       PUBLIC        AMBERLED
   B:0088H.3       PUBLIC        IE1
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 4
+
+
   B:00B0H.7       PUBLIC        E
   B:00A0H.7       PUBLIC        GREENLED
   B:00A8H.1       PUBLIC        ET0
@@ -179,14 +193,8 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:0098H.2       PUBLIC        RB8
   B:00A8H.0       PUBLIC        EX0
   B:0088H.0       PUBLIC        IT0
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 4
-
-
   B:0098H.3       PUBLIC        TB8
   B:00A8H.2       PUBLIC        EX1
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/01/2019  21:20:24  PAGE 4
-
-
   B:0088H.2       PUBLIC        IT1
   B:00D0H.0       PUBLIC        P
   B:0098H.7       PUBLIC        SM0
@@ -198,6 +206,7 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00D0H.4       PUBLIC        RS1
   B:0088H.6       PUBLIC        TR1
   B:00C8H.2       PUBLIC        TR2
+  B:00A0H.0       PUBLIC        SW1
   B:00A0H.1       PUBLIC        SW2
   B:00A0H.2       PUBLIC        SW3
   B:00A0H.3       PUBLIC        SW4
@@ -212,11 +221,12 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00D8H.0       PUBLIC        CCF0
   B:00D8H.1       PUBLIC        CCF1
   -------         PROC          MAIN
-  C:001FH         LINE#         12
-  C:001FH         LINE#         13
-  C:0024H         LINE#         17
-  C:0024H         LINE#         18
-  C:0027H         LINE#         19
+  C:0506H         LINE#         13
+  C:0506H         LINE#         14
+  C:050BH         LINE#         15
+  C:050EH         LINE#         16
+  C:050EH         LINE#         17
+  C:0511H         LINE#         18
   -------         ENDPROC       MAIN
   -------         ENDMOD        MAIN
 
@@ -229,6 +239,9 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00D8H.4       PUBLIC        CCF4
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 5
+
+
   D:00B0H         PUBLIC        P3
   B:00B0H.4       PUBLIC        T0
   B:00D0H.6       PUBLIC        AC
@@ -242,14 +255,8 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:0098H.7       PUBLIC        FE
   B:00B0H.3       PUBLIC        nINT1
   D:00A8H         PUBLIC        IEN0
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 5
-
-
   B:00B0H.0       PUBLIC        RxD
   B:0090H.0       PUBLIC        P1_0
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/01/2019  21:20:24  PAGE 5
-
-
   B:00B0H.1       PUBLIC        TxD
   B:0090H.3       PUBLIC        CEX0
   B:0090H.1       PUBLIC        P1_1
@@ -267,7 +274,7 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:0090H.6       PUBLIC        P1_6
   B:00B0H.5       PUBLIC        P3_5
   B:0090H.7       PUBLIC        P1_7
-  C:0602H         PUBLIC        go_to_sleep
+  C:0528H         PUBLIC        go_to_sleep
   B:00B0H.6       PUBLIC        nWR
   B:00A8H.4       PUBLIC        ES
   B:0098H.0       PUBLIC        RI
@@ -292,6 +299,9 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00A0H.4       PUBLIC        REDLED
   D:0098H         PUBLIC        SCON
   B:00A0H.5       PUBLIC        YELLOWLED
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 6
+
+
   B:0080H.0       PUBLIC        AD0
   D:0088H         PUBLIC        TCON
   B:0080H.1       PUBLIC        AD1
@@ -305,14 +315,8 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00B0H.0       PUBLIC        per_TxD
   B:0080H.5       PUBLIC        AD5
   B:0080H.6       PUBLIC        AD6
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 6
-
-
   B:0080H.7       PUBLIC        AD7
   B:0088H.1       PUBLIC        IE0
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/01/2019  21:20:24  PAGE 6
-
-
   B:00A0H.6       PUBLIC        AMBERLED
   B:0088H.3       PUBLIC        IE1
   B:00B0H.7       PUBLIC        E
@@ -329,19 +333,18 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:0098H.3       PUBLIC        TB8
   B:00A8H.2       PUBLIC        EX1
   B:0088H.2       PUBLIC        IT1
-  D:00CDH         PUBLIC        TH2
   B:00D0H.0       PUBLIC        P
   B:0098H.7       PUBLIC        SM0
   B:0090H.2       PUBLIC        ECI
   B:0098H.6       PUBLIC        SM1
-  C:05B0H         PUBLIC        _sEOS_init
+  C:04AFH         PUBLIC        _sEOS_init
   B:0098H.5       PUBLIC        SM2
-  D:00CCH         PUBLIC        TL2
   B:00D0H.3       PUBLIC        RS0
   B:0088H.4       PUBLIC        TR0
   B:00D0H.4       PUBLIC        RS1
   B:0088H.6       PUBLIC        TR1
   B:00C8H.2       PUBLIC        TR2
+  B:00A0H.0       PUBLIC        SW1
   B:00A0H.1       PUBLIC        SW2
   B:00A0H.2       PUBLIC        SW3
   B:00A0H.3       PUBLIC        SW4
@@ -356,35 +359,32 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00D8H.0       PUBLIC        CCF0
   B:00D8H.1       PUBLIC        CCF1
   -------         PROC          _SEOS_INIT
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 7
+
+
   D:0007H         SYMBOL        interval
   -------         DO            interval
-  D:0012H         SYMBOL        increments
   D:0004H         SYMBOL        reload_16
   D:0007H         SYMBOL        reload_8H
   D:0006H         SYMBOL        reload_8L
   -------         ENDDO         reload_8L
-  C:05B0H         LINE#         11
-  C:05B0H         LINE#         17
-  C:05B3H         LINE#         20
-  C:05D0H         LINE#         22
-  C:05D8H         LINE#         25
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 7
-
-
-  C:05D8H         LINE#         26
-  C:05DAH         LINE#         29
-  C:05DCH         LINE#         30
-  C:05DEH         LINE#         33
-  C:05E0H         LINE#         34
-  C:05E2H         LINE#         36
-  C:05E4H         LINE#         37
-  C:05E6H         LINE#         39
-  C:05E8H         LINE#         40
+  C:04AFH         LINE#         11
+  C:04AFH         LINE#         18
+  C:04B2H         LINE#         23
+  C:04D1H         LINE#         26
+  C:04D1H         LINE#         27
+  C:04D3H         LINE#         31
+  C:04D5H         LINE#         35
+  C:04D7H         LINE#         37
+  C:04D9H         LINE#         38
+  C:04DBH         LINE#         39
+  C:04DDH         LINE#         40
+  C:04DFH         LINE#         41
   -------         ENDPROC       _SEOS_INIT
   -------         PROC          GO_TO_SLEEP
-  C:0602H         LINE#         42
-  C:0602H         LINE#         43
-  C:0605H         LINE#         44
+  C:0528H         LINE#         43
+  C:0528H         LINE#         44
+  C:052BH         LINE#         45
   -------         ENDPROC       GO_TO_SLEEP
   -------         ENDMOD        SEOS
 
@@ -398,7 +398,7 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   D:0090H         PUBLIC        P1
   D:00A0H         PUBLIC        P2
   D:0008H         PUBLIC        TIMER
-  B:0020H.4       PUBLIC        strobe_lights
+  D:000CH         PUBLIC        strobe_lights
   D:00B0H         PUBLIC        P3
   B:00B0H.4       PUBLIC        T0
   B:00D0H.6       PUBLIC        AC
@@ -413,37 +413,34 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00B0H.3       PUBLIC        nINT1
   D:00A8H         PUBLIC        IEN0
   B:00B0H.0       PUBLIC        RxD
-  B:0020H.5       PUBLIC        Button_1
   B:0090H.0       PUBLIC        P1_0
   B:00B0H.1       PUBLIC        TxD
   B:0090H.3       PUBLIC        CEX0
   B:0090H.1       PUBLIC        P1_1
   B:0090H.4       PUBLIC        CEX1
   B:0090H.2       PUBLIC        P1_2
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 8
+
+
   B:00C8H.0       PUBLIC        CP
-  B:0020H.6       PUBLIC        Button_4
   B:0090H.3       PUBLIC        P1_3
   B:00B0H.2       PUBLIC        P3_2
   B:0090H.4       PUBLIC        P1_4
   B:00D8H.6       PUBLIC        CR
   B:00B0H.3       PUBLIC        P3_3
   B:0090H.5       PUBLIC        P1_5
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 8
-
-
   B:00C8H.6       PUBLIC        EXF2
   D:00B8H         PUBLIC        IPL0
   B:0090H.6       PUBLIC        P1_6
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/01/2019  21:20:24  PAGE 8
-
-
   B:00B0H.5       PUBLIC        P3_5
   B:0090H.7       PUBLIC        P1_7
   B:00B0H.6       PUBLIC        nWR
   B:00A8H.4       PUBLIC        ES
   B:0098H.0       PUBLIC        RI
   B:00D0H.7       PUBLIC        CY
+  C:04E9H         PUBLIC        _set_lights
   B:0098H.1       PUBLIC        TI
+  D:000DH         PUBLIC        TIMER_INTERVAL_DELAY
   B:00B8H.1       PUBLIC        PT0L
   B:00B8H.3       PUBLIC        PT1L
   B:00B8H.5       PUBLIC        PT2L
@@ -454,7 +451,11 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00D0H.2       PUBLIC        OV
   B:0090H.1       PUBLIC        SS
   B:00B8H.2       PUBLIC        PX1L
+  D:0011H         PUBLIC        SW1_p
+  D:0014H         PUBLIC        SW2_p
   B:00C8H.5       PUBLIC        RCLK
+  D:0017H         PUBLIC        SW3_p
+  D:001AH         PUBLIC        SW4_p
   B:00C8H.4       PUBLIC        TCLK
   B:00B8H.6       PUBLIC        PPCL
   B:00A0H.4       PUBLIC        REDLED
@@ -474,7 +475,215 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:0080H.5       PUBLIC        AD5
   B:0080H.6       PUBLIC        AD6
   B:0080H.7       PUBLIC        AD7
-  C:000EH         PUBLIC        set_lights
+  B:0088H.1       PUBLIC        IE0
+  B:00A0H.6       PUBLIC        AMBERLED
+  B:0088H.3       PUBLIC        IE1
+  B:00B0H.7       PUBLIC        E
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 9
+
+
+  B:00A0H.7       PUBLIC        GREENLED
+  B:00A8H.1       PUBLIC        ET0
+  B:00A8H.3       PUBLIC        ET1
+  B:0088H.5       PUBLIC        TF0
+  D:001DH         PUBLIC        SYSTEM_STATE
+  B:00A8H.5       PUBLIC        ET2
+  B:0088H.7       PUBLIC        TF1
+  B:00C8H.7       PUBLIC        TF2
+  B:0098H.2       PUBLIC        RB8
+  B:00A8H.0       PUBLIC        EX0
+  B:0088H.0       PUBLIC        IT0
+  B:0098H.3       PUBLIC        TB8
+  B:00A8H.2       PUBLIC        EX1
+  B:0088H.2       PUBLIC        IT1
+  B:00D0H.0       PUBLIC        P
+  B:0098H.7       PUBLIC        SM0
+  B:0090H.2       PUBLIC        ECI
+  B:0098H.6       PUBLIC        SM1
+  B:0098H.5       PUBLIC        SM2
+  B:00D0H.3       PUBLIC        RS0
+  B:0088H.4       PUBLIC        TR0
+  B:00D0H.4       PUBLIC        RS1
+  B:0088H.6       PUBLIC        TR1
+  B:00C8H.2       PUBLIC        TR2
+  B:00A0H.0       PUBLIC        SW1
+  B:00A0H.1       PUBLIC        SW2
+  B:00A0H.2       PUBLIC        SW3
+  B:00A0H.3       PUBLIC        SW4
+  B:0090H.6       PUBLIC        SCK
+  B:00C8H.3       PUBLIC        EXEN2
+  C:01F7H         PUBLIC        LED_State_Change
+  B:0098H.4       PUBLIC        REN
+  D:00C8H         PUBLIC        T2CON
+  B:00B8H.4       PUBLIC        PLS
+  C:02D4H         PUBLIC        blinking_lights_isr
+  B:00D0H.5       PUBLIC        F0
+  B:00D0H.1       PUBLIC        F1
+  D:00D0H         PUBLIC        PSW
+  B:00D8H.0       PUBLIC        CCF0
+  B:00D8H.1       PUBLIC        CCF1
+  -------         PROC          L?0018
+  -------         ENDPROC       L?0018
+  -------         PROC          _SET_LIGHTS
+  D:0007H         SYMBOL        light_config
+  C:04E9H         LINE#         14
+  C:04E9H         LINE#         15
+  C:04EEH         LINE#         16
+  C:04F2H         LINE#         17
+  -------         ENDPROC       _SET_LIGHTS
+  -------         PROC          BLINKING_LIGHTS_ISR
+  C:02D4H         LINE#         21
+  C:02F1H         LINE#         23
+  C:02F3H         LINE#         24
+  C:02FCH         LINE#         25
+  C:0305H         LINE#         26
+  C:030EH         LINE#         27
+  C:0317H         LINE#         28
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 10
+
+
+  C:032CH         LINE#         30
+  C:0335H         LINE#         31
+  C:033EH         LINE#         32
+  C:0347H         LINE#         33
+  C:0350H         LINE#         35
+  C:0366H         LINE#         36
+  C:0366H         LINE#         37
+  C:0369H         LINE#         38
+  C:0375H         LINE#         39
+  C:0375H         LINE#         40
+  -------         ENDPROC       BLINKING_LIGHTS_ISR
+  -------         PROC          LED_STATE_CHANGE
+  C:01F7H         LINE#         42
+  C:01F7H         LINE#         43
+  C:01F7H         LINE#         44
+  C:01FBH         LINE#         45
+  C:01FBH         LINE#         46
+  C:0200H         LINE#         47
+  C:0223H         LINE#         48
+  C:0223H         LINE#         49
+  C:0226H         LINE#         50
+  C:0226H         LINE#         58
+  C:0227H         LINE#         107
+  C:0230H         LINE#         108
+  C:0230H         LINE#         109
+  C:023FH         LINE#         110
+  C:023FH         LINE#         112
+  C:0254H         LINE#         113
+  C:0269H         LINE#         114
+  C:0269H         LINE#         115
+  C:0274H         LINE#         116
+  C:0274H         LINE#         117
+  C:0277H         LINE#         118
+  C:0277H         LINE#         119
+  C:0286H         LINE#         120
+  C:0286H         LINE#         122
+  C:029FH         LINE#         123
+  C:02B3H         LINE#         124
+  C:02B3H         LINE#         125
+  C:02BDH         LINE#         126
+  C:02BDH         LINE#         127
+  C:02C0H         LINE#         128
+  C:02C0H         LINE#         129
+  C:02D0H         LINE#         130
+  C:02D0H         LINE#         131
+  C:02D3H         LINE#         132
+  C:02D3H         LINE#         133
+  C:02D3H         LINE#         134
+  -------         ENDPROC       LED_STATE_CHANGE
+  -------         ENDMOD        BLINKING_LIGHTS
+
+  -------         MODULE        BUTTONS
+  C:0000H         SYMBOL        _ICE_DUMMY_
+  B:00D8H.2       PUBLIC        CCF2
+  B:00B0H.4       PUBLIC        BLUELED
+  B:00D8H.3       PUBLIC        CCF3
+  D:0080H         PUBLIC        P0
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 11
+
+
+  B:00D8H.4       PUBLIC        CCF4
+  D:0090H         PUBLIC        P1
+  D:00A0H         PUBLIC        P2
+  D:00B0H         PUBLIC        P3
+  B:00B0H.4       PUBLIC        T0
+  B:00D0H.6       PUBLIC        AC
+  B:00B0H.5       PUBLIC        T1
+  B:00B0H.7       PUBLIC        nRD
+  B:0090H.0       PUBLIC        T2
+  B:00A8H.7       PUBLIC        EA
+  B:00A8H.6       PUBLIC        EC
+  B:00D8H.7       PUBLIC        CF
+  B:00B0H.2       PUBLIC        nINT0
+  B:0098H.7       PUBLIC        FE
+  C:0021H         PUBLIC        Return_SW1_address
+  B:00B0H.3       PUBLIC        nINT1
+  C:0513H         PUBLIC        Return_SW2_address
+  D:00A8H         PUBLIC        IEN0
+  C:051AH         PUBLIC        Return_SW3_address
+  C:0521H         PUBLIC        Return_SW4_address
+  B:00B0H.0       PUBLIC        RxD
+  B:0090H.0       PUBLIC        P1_0
+  B:00B0H.1       PUBLIC        TxD
+  B:0090H.3       PUBLIC        CEX0
+  B:0090H.1       PUBLIC        P1_1
+  B:0090H.4       PUBLIC        CEX1
+  B:0090H.2       PUBLIC        P1_2
+  B:00C8H.0       PUBLIC        CP
+  B:0090H.3       PUBLIC        P1_3
+  B:00B0H.2       PUBLIC        P3_2
+  B:0090H.4       PUBLIC        P1_4
+  B:00D8H.6       PUBLIC        CR
+  B:00B0H.3       PUBLIC        P3_3
+  B:0090H.5       PUBLIC        P1_5
+  B:00C8H.6       PUBLIC        EXF2
+  D:00B8H         PUBLIC        IPL0
+  B:0090H.6       PUBLIC        P1_6
+  D:001EH         PUBLIC        SW1_values_g
+  B:00B0H.5       PUBLIC        P3_5
+  B:0090H.7       PUBLIC        P1_7
+  B:00B0H.6       PUBLIC        nWR
+  B:00A8H.4       PUBLIC        ES
+  D:0021H         PUBLIC        SW2_values_g
+  D:0024H         PUBLIC        SW3_values_g
+  D:0027H         PUBLIC        SW4_values_g
+  B:0098H.0       PUBLIC        RI
+  B:00D0H.7       PUBLIC        CY
+  B:0098H.1       PUBLIC        TI
+  B:00B8H.1       PUBLIC        PT0L
+  B:00B8H.3       PUBLIC        PT1L
+  B:00B8H.5       PUBLIC        PT2L
+  B:0090H.1       PUBLIC        T2EX
+  D:00D8H         PUBLIC        CCON
+  B:00B0H.6       PUBLIC        RS
+  B:00B8H.0       PUBLIC        PX0L
+  B:00D0H.2       PUBLIC        OV
+  B:0090H.1       PUBLIC        SS
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 12
+
+
+  B:00B8H.2       PUBLIC        PX1L
+  B:00C8H.5       PUBLIC        RCLK
+  B:00C8H.4       PUBLIC        TCLK
+  B:00B8H.6       PUBLIC        PPCL
+  B:00A0H.4       PUBLIC        REDLED
+  C:0390H         PUBLIC        _Read_Switch
+  D:0098H         PUBLIC        SCON
+  B:00A0H.5       PUBLIC        YELLOWLED
+  B:0080H.0       PUBLIC        AD0
+  D:0088H         PUBLIC        TCON
+  B:0080H.1       PUBLIC        AD1
+  B:0080H.2       PUBLIC        AD2
+  B:00B0H.1       PUBLIC        per_RxD
+  B:00C8H.1       PUBLIC        CnT2
+  B:0080H.3       PUBLIC        AD3
+  B:0090H.5       PUBLIC        MISO
+  B:0090H.7       PUBLIC        MOSI
+  B:0080H.4       PUBLIC        AD4
+  B:00B0H.0       PUBLIC        per_TxD
+  B:0080H.5       PUBLIC        AD5
+  B:0080H.6       PUBLIC        AD6
+  B:0080H.7       PUBLIC        AD7
   B:0088H.1       PUBLIC        IE0
   B:00A0H.6       PUBLIC        AMBERLED
   B:0088H.3       PUBLIC        IE1
@@ -483,29 +692,20 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00A8H.1       PUBLIC        ET0
   B:00A8H.3       PUBLIC        ET1
   B:0088H.5       PUBLIC        TF0
-  D:000CH         PUBLIC        SYSTEM_STATE
   B:00A8H.5       PUBLIC        ET2
   B:0088H.7       PUBLIC        TF1
-  D:000DH         PUBLIC        TIMER_INTERVAL
   B:00C8H.7       PUBLIC        TF2
   B:0098H.2       PUBLIC        RB8
   B:00A8H.0       PUBLIC        EX0
   B:0088H.0       PUBLIC        IT0
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 9
-
-
   B:0098H.3       PUBLIC        TB8
   B:00A8H.2       PUBLIC        EX1
   B:0088H.2       PUBLIC        IT1
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/01/2019  21:20:24  PAGE 9
-
-
   B:00D0H.0       PUBLIC        P
   B:0098H.7       PUBLIC        SM0
   B:0090H.2       PUBLIC        ECI
   B:0098H.6       PUBLIC        SM1
   B:0098H.5       PUBLIC        SM2
-  D:0011H         PUBLIC        BUTTON_1_STATE
   B:00D0H.3       PUBLIC        RS0
   B:0088H.4       PUBLIC        TR0
   B:00D0H.4       PUBLIC        RS1
@@ -519,204 +719,136 @@ SYMBOL TABLE OF MODULE:  CPE5160_Exp_5 (MAIN)
   B:00C8H.3       PUBLIC        EXEN2
   B:0098H.4       PUBLIC        REN
   D:00C8H         PUBLIC        T2CON
-  C:0606H         PUBLIC        _Button_State_Change
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 13
+
+
+  C:0003H         PUBLIC        Switch_Init
   B:00B8H.4       PUBLIC        PLS
-  C:002EH         PUBLIC        blinking_lights_isr
   B:00D0H.5       PUBLIC        F0
   B:00D0H.1       PUBLIC        F1
   D:00D0H         PUBLIC        PSW
   B:00D8H.0       PUBLIC        CCF0
   B:00D8H.1       PUBLIC        CCF1
-  -------         PROC          L?0046
-  -------         ENDPROC       L?0046
-  -------         PROC          SET_LIGHTS
-  B:0020H.0       SYMBOL        green
-  B:0020H.1       SYMBOL        amber
-  B:0020H.2       SYMBOL        yellow
-  B:0020H.3       SYMBOL        red
-  C:000EH         LINE#         13
-  C:000EH         LINE#         14
-  C:0012H         LINE#         15
-  C:0016H         LINE#         16
-  C:001AH         LINE#         17
-  C:001EH         LINE#         18
-  -------         ENDPROC       SET_LIGHTS
-  -------         PROC          BLINKING_LIGHTS_ISR
-  C:002EH         LINE#         21
-  C:004BH         LINE#         22
-  C:004DH         LINE#         23
-  C:0066H         LINE#         26
-  C:0075H         LINE#         27
-  C:0075H         LINE#         28
-  C:0075H         LINE#         30
-  C:0078H         LINE#         31
-  C:0078H         LINE#         32
-  C:007BH         LINE#         33
-  C:007BH         LINE#         34
-  C:007DH         LINE#         35
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 10
+  -------         PROC          RETURN_SW1_ADDRESS
+  C:0021H         LINE#         7
+  C:0021H         LINE#         8
+  C:0027H         LINE#         9
+  -------         ENDPROC       RETURN_SW1_ADDRESS
+  -------         PROC          RETURN_SW2_ADDRESS
+  C:0513H         LINE#         11
+  C:0513H         LINE#         12
+  C:0519H         LINE#         13
+  -------         ENDPROC       RETURN_SW2_ADDRESS
+  -------         PROC          RETURN_SW3_ADDRESS
+  C:051AH         LINE#         15
+  C:051AH         LINE#         16
+  C:0520H         LINE#         17
+  -------         ENDPROC       RETURN_SW3_ADDRESS
+  -------         PROC          RETURN_SW4_ADDRESS
+  C:0521H         LINE#         19
+  C:0521H         LINE#         20
+  C:0527H         LINE#         21
+  -------         ENDPROC       RETURN_SW4_ADDRESS
+  -------         PROC          SWITCH_INIT
+  C:0003H         LINE#         23
+  C:0003H         LINE#         24
+  C:0003H         LINE#         25
+  C:0006H         LINE#         26
+  C:0009H         LINE#         27
+  C:000BH         LINE#         29
+  C:000EH         LINE#         30
+  C:0010H         LINE#         31
+  C:0012H         LINE#         33
+  C:0015H         LINE#         34
+  C:0017H         LINE#         35
+  C:0019H         LINE#         37
+  C:001CH         LINE#         38
+  C:001EH         LINE#         39
+  C:0020H         LINE#         40
+  -------         ENDPROC       SWITCH_INIT
+  -------         PROC          _READ_SWITCH
+  D:0001H         SYMBOL        SW_input_p
+  C:0390H         LINE#         42
+  C:0390H         LINE#         43
+  C:0390H         LINE#         44
+  C:0399H         LINE#         45
+  C:0399H         LINE#         46
+  C:03A3H         LINE#         47
+  C:03A3H         LINE#         48
+  C:03A9H         LINE#         49
+  C:03B1H         LINE#         50
+  C:03B1H         LINE#         51
+  C:03B1H         LINE#         52
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 14
 
 
-  C:007DH         LINE#         37
-  C:0080H         LINE#         38
-  C:0082H         LINE#         39
-  C:0082H         LINE#         40
-  C:0084H         LINE#         41
-  C:008FH         LINE#         42
-  C:0092H         LINE#         43
-  C:0092H         LINE#         44
-  C:0095H         LINE#         45
-  C:0095H         LINE#         46
-  C:0097H         LINE#         47
-  C:0097H         LINE#         49
-  C:009AH         LINE#         50
-  C:009AH         LINE#         51
-  C:009AH         LINE#         53
-  C:00C3H         LINE#         54
-  C:00C3H         LINE#         55
-  C:00C3H         LINE#         56
-  C:00C8H         LINE#         61
-  C:00E1H         LINE#         62
-  C:00E1H         LINE#         63
-  C:00E1H         LINE#         64
-  C:00E4H         LINE#         65
-  C:00ECH         LINE#         66
-  C:00EFH         LINE#         67
-  C:010EH         LINE#         68
-  C:010EH         LINE#         69
-  C:0111H         LINE#         70
-  C:011CH         LINE#         71
-  C:0124H         LINE#         72
-  C:0124H         LINE#         73
-  C:0127H         LINE#         74
-  C:0127H         LINE#         75
-  C:0140H         LINE#         76
-  C:0140H         LINE#         77
-  C:0143H         LINE#         78
-  C:014AH         LINE#         79
-  C:0152H         LINE#         80
-  C:0155H         LINE#         81
-  C:0174H         LINE#         82
-  C:0174H         LINE#         83
-  C:0176H         LINE#         84
-  C:017EH         LINE#         85
-  C:017EH         LINE#         86
-  C:0181H         LINE#         87
-  C:0181H         LINE#         88
-  C:019AH         LINE#         89
-  C:019AH         LINE#         90
-  C:019DH         LINE#         91
-  C:01A8H         LINE#         92
-  C:01B0H         LINE#         93
-  C:01B3H         LINE#         94
-  C:01D2H         LINE#         95
-  C:01D2H         LINE#         96
-  C:01D2H         LINE#         97
-  C:01D5H         LINE#         98
-  C:01DDH         LINE#         99
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 11
+  C:03B6H         LINE#         53
+  C:03B6H         LINE#         54
+  C:03BDH         LINE#         55
+  C:03C8H         LINE#         56
+  C:03C8H         LINE#         57
+  C:03CFH         LINE#         58
+  C:03CFH         LINE#         59
+  C:03D7H         LINE#         60
+  C:03D7H         LINE#         62
+  C:03D7H         LINE#         63
+  C:03DEH         LINE#         64
+  C:03DEH         LINE#         65
+  C:03DEH         LINE#         66
+  C:03DEH         LINE#         67
+  C:03E2H         LINE#         68
+  C:03E2H         LINE#         69
+  C:03EBH         LINE#         70
+  C:03EBH         LINE#         71
+  C:03F3H         LINE#         72
+  C:03F3H         LINE#         73
+  C:03F3H         LINE#         74
+  C:03F8H         LINE#         75
+  C:03F8H         LINE#         76
+  C:03FFH         LINE#         77
+  C:040AH         LINE#         78
+  C:040AH         LINE#         79
+  C:0413H         LINE#         80
+  C:0413H         LINE#         81
+  C:041AH         LINE#         82
+  C:041AH         LINE#         84
+  C:041AH         LINE#         85
+  C:0422H         LINE#         86
+  C:0422H         LINE#         87
+  C:0422H         LINE#         88
+  C:0422H         LINE#         89
+  -------         ENDPROC       _READ_SWITCH
+  -------         ENDMOD        BUTTONS
 
+  -------         MODULE        ?C?CLDPTR
+  C:002EH         PUBLIC        ?C?CLDPTR
+  -------         ENDMOD        ?C?CLDPTR
 
-  C:01DDH         LINE#         100
-  C:01E0H         LINE#         101
-  C:01E0H         LINE#         102
-  C:01F9H         LINE#         103
-  C:01F9H         LINE#         104
-  C:01FCH         LINE#         105
-  C:0207H         LINE#         106
-  C:020FH         LINE#         107
-  C:0212H         LINE#         108
-  C:0231H         LINE#         109
-  C:0231H         LINE#         110
-  C:0234H         LINE#         111
-  C:023BH         LINE#         112
-  C:0243H         LINE#         113
-  C:0243H         LINE#         114
-  C:0246H         LINE#         115
-  C:0246H         LINE#         116
-  C:025FH         LINE#         117
-  C:025FH         LINE#         118
-  C:0262H         LINE#         119
-  C:026DH         LINE#         120
-  C:0275H         LINE#         121
-  C:0278H         LINE#         122
-  C:0297H         LINE#         123
-  C:0297H         LINE#         124
-  C:029AH         LINE#         125
-  C:02A5H         LINE#         126
-  C:02ADH         LINE#         127
-  C:02ADH         LINE#         128
-  C:02B0H         LINE#         129
-  C:02B0H         LINE#         130
-  C:02C9H         LINE#         131
-  C:02C9H         LINE#         132
-  C:02CCH         LINE#         133
-  C:02D7H         LINE#         134
-  C:02DFH         LINE#         135
-  C:02E2H         LINE#         136
-  C:0301H         LINE#         137
-  C:0301H         LINE#         138
-  C:0304H         LINE#         139
-  C:030FH         LINE#         140
-  C:0317H         LINE#         141
-  C:0317H         LINE#         142
-  C:031AH         LINE#         143
-  C:031AH         LINE#         144
-  C:0333H         LINE#         145
-  C:0333H         LINE#         146
-  C:0336H         LINE#         147
-  C:0341H         LINE#         148
-  C:0349H         LINE#         149
-  C:034CH         LINE#         150
-  C:0368H         LINE#         151
-  C:0368H         LINE#         152
-  C:036BH         LINE#         153
-  C:0376H         LINE#         154
-  C:037EH         LINE#         155
-  C:037EH         LINE#         156
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/02/2019  23:40:49  PAGE 12
+  -------         MODULE        ?C?CLDOPTR
+  C:0047H         PUBLIC        ?C?CLDOPTR
+  -------         ENDMOD        ?C?CLDOPTR
 
+  -------         MODULE        ?C?CILDOPTR
+  C:0074H         PUBLIC        ?C?CILDOPTR
+  -------         ENDMOD        ?C?CILDOPTR
 
-  C:0380H         LINE#         157
-  C:0380H         LINE#         158
-  C:0399H         LINE#         159
-  C:0399H         LINE#         160
-  C:039BH         LINE#         161
-  C:03A0H         LINE#         162
-  C:03A8H         LINE#         163
-  C:03AAH         LINE#         164
-  C:03C3H         LINE#         165
-  C:03C3H         LINE#         166
-  C:03C6H         LINE#         167
-  C:03D1H         LINE#         168
-  C:03D9H         LINE#         169
-  C:03D9H         LINE#         170
-  C:03DBH         LINE#         171
-  C:03DBH         LINE#         172
-  C:03DBH         LINE#         173
-  -------         ENDPROC       BLINKING_LIGHTS_ISR
-  -------         PROC          _BUTTON_STATE_CHANGE
-  D:0016H         SYMBOL        button_state
-  C:0606H         LINE#         176
-  C:0608H         LINE#         177
-  C:0608H         LINE#         179
-  -------         ENDPROC       _BUTTON_STATE_CHANGE
-  -------         ENDMOD        BLINKING_LIGHTS
+  -------         MODULE        ?C?CSTOPTR
+  C:00A7H         PUBLIC        ?C?CSTOPTR
+  -------         ENDMOD        ?C?CSTOPTR
 
   -------         MODULE        ?C?LMUL
-  C:03F6H         PUBLIC        ?C?LMUL
+  C:00C9H         PUBLIC        ?C?LMUL
   -------         ENDMOD        ?C?LMUL
+BL51 BANKED LINKER/LOCATER V4.02                                                      12/04/2019  02:39:20  PAGE 15
+
+
 
   -------         MODULE        ?C?ULDIV
-  C:0481H         PUBLIC        ?C?ULDIV
+  C:0154H         PUBLIC        ?C?ULDIV
   -------         ENDMOD        ?C?ULDIV
-BL51 BANKED LINKER/LOCATER V4.02                                                      12/01/2019  21:20:24  PAGE 12
 
   -------         MODULE        ?C?ULCMP
-  C:0513H         PUBLIC        ?C?ULCMP
+  C:01E6H         PUBLIC        ?C?ULCMP
   -------         ENDMOD        ?C?ULCMP
 
-*** WARNING L16: UNCALLED SEGMENT, IGNORED FOR OVERLAY PROCESS
-    SEGMENT: ?PR?_BUTTON_STATE_CHANGE?BLINKING_LIGHTS
-
-LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)
+LINK/LOCATE RUN COMPLETE.  0 WARNING(S),  0 ERROR(S)

@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  MAIN                                                                   12/02/2019 23:40:48 PAGE 1   
+C51 COMPILER V6.02  MAIN                                                                   12/04/2019 02:39:18 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE MAIN
@@ -16,21 +16,20 @@ stmt level    source
    7          #include "main.h"
    8          #include "PORT.h"
    9          #include "sEOS.h"
-  10          //#include "Blinking_Lights.h"
-  11          
-  12          void main(void) {
-  13   1          sEOS_init(1); // initialize sEOS interrupt at 1ms
-  14   1      	//SW1 = 1; // Have to set to 1 to be able to read an input in 8051
-  15   1      	//SW2 = 1;
-  16   1      	//SW3 = 1;
-  17   1          while(1) {
-  18   2              go_to_sleep(); // enter idle mode
-  19   2          }
-  20   1      }
+  10          #include "Buttons.h"
+  11          //#include "Blinking_Lights.h"
+  12          
+  13          void main(void) {
+  14   1          sEOS_init(1); // initialize sEOS interrupt at 1ms
+  15   1      	Switch_Init();
+  16   1          while(1) {
+  17   2              go_to_sleep(); // enter idle mode
+  18   2          }
+  19   1      }
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =     10    ----
+   CODE SIZE        =     13    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

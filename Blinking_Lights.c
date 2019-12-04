@@ -1,179 +1,127 @@
 #include "Blinking_Lights.h"
+#include "Buttons.h"
+#include "Port.h"
 #include <stdio.h>
 
-volatile bit Button_1 = 0;
-volatile bit strobe_lights = 0;
 volatile states_t SYSTEM_STATE = IDLE_STATE;
-volatile b_states_t BUTTON_1_STATE = RELEASED;
-volatile uint32_t TIMER = 0;
-volatile bit Button_4 = 0;
-volatile uint32_t TIMER_INTERVAL=1000;
-sbit SW1 = P2^0;
+volatile uint32_t TIMER_INTERVAL_DELAY = 660;
+uint32_t TIMER = 0;
 
-void set_lights(bit green, bit amber, bit yellow, bit red) {
-    GREENLED = green;
-    AMBERLED = amber;
-    YELLOWLED = yellow;
-    REDLED = red;
+void set_lights(uint8_t light_config) {
+	light_config = light_config << 4;
+	P2 = light_config|0x0F;
 }
 
+SW_values_t * SW1_p, *SW2_p, *SW3_p, *SW4_p;
 
 void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
-    TF2 = 0; // clear interrupt flag
+	
+	TF2=0;
+	SW1_p = Return_SW1_address();
+	SW2_p = Return_SW2_address();
+	SW3_p = Return_SW3_address();
+	SW4_p = Return_SW4_address();
     TIMER++; // increment timer
+
+	Read_Switch(SW1_p);
+	Read_Switch(SW2_p);
+	Read_Switch(SW3_p);
+	Read_Switch(SW4_p);
 	
-	
-	switch(BUTTON_1_STATE)
+	if(TIMER==TIMER_INTERVAL_DELAY)
 	{
- 		case RELEASED:
-			//set_lights(0,1,1,1);
-			if(SW1 == 0)
-			{
-				BUTTON_1_STATE = R_EDGE;
-			}
-			break;
-		case R_EDGE:
-			//set_lights(1,0,1,1);
-			BUTTON_1_STATE = PRESSED;
-			break;
-		case PRESSED:
-			strobe_lights = 1;
-			set_lights(1,1,0,1);
-			if(SW1 == 1)
-			{
-				BUTTON_1_STATE = F_EDGE;
-			}
-			break;
-		case F_EDGE:
-			//set_lights(1,1,1,0);
-			BUTTON_1_STATE = RELEASED;
-			break;
-	}
-
-	switch(SYSTEM_STATE)
-	{
-		case IDLE_STATE:
-			set_lights(1,1,1,1);
-
-			//strobe_lights = 1;
-
-
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_1;
-				set_lights(0,1,1,1);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_7;
-				set_lights(1,1,1,0);
-				TIMER = 0;
-			}
-			break;
-		case STATE_1:
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_2;
-				set_lights(0,0,1,1);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = IDLE_STATE;
-				TIMER = 0;
-			}
-			break;
-		case STATE_2:
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_3;
-				set_lights(0,0,0,1);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_1;
-				set_lights(0,1,1,1);
-				TIMER = 0;
-			}
-			break;
-		case STATE_3:
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_4;
-				set_lights(0,0,0,0);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_2;
-				set_lights(0,0,1,1);
-				TIMER = 0;
-			}
-			break;
-		case STATE_4:
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_5;
-				set_lights(1,0,0,0);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_3;
-				set_lights(0,0,0,1);
-				TIMER = 0;
-			}
-			break;
-		case STATE_5:
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_6;
-				set_lights(1,1,0,0);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-			 	SYSTEM_STATE = STATE_4;
-				set_lights(0,0,0,0);
-				TIMER = 0;
-			}
-			break;
-		case STATE_6:		
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_7;
-				set_lights(1,1,1,0);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_5;
-				set_lights(1,0,0,0);
-				TIMER = 0;
-			}
-			break;
-		case STATE_7:	
-			if(strobe_lights==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = IDLE_STATE;
-				set_lights(1,1,1,1);
-				TIMER = 0;
-			}
-			else if(Button_4==1&&TIMER==TIMER_INTERVAL)
-			{
-				SYSTEM_STATE = STATE_6;
-				set_lights(1,1,0,0);
-				TIMER = 0;
-			}
-			strobe_lights = 0;
-			break;
+		LED_State_Change();
+		TIMER=0;
 	}
 }
 
-
-void Button_State_Change(b_states_t button_state)
+void LED_State_Change(void)
 {
+	if(SYSTEM_STATE == IDLE_STATE)
+	{
+		set_lights(15);
+		if(SW2_p->SW_state==pressed||SW3_p->SW_state==pressed)
+		{
+			SYSTEM_STATE=TIMER_INCREMENT_MODE;
+		}
+		
+		else if(SW1_p->SW_state==pressed)
+		{
+			SYSTEM_STATE = STATE_1;
+			set_lights(0x7F);
+			TIMER = 0;
+		}	
+	}
+	else if(SYSTEM_STATE==STATE_1)
+	{
 
+		SYSTEM_STATE = STATE_2;
+		set_lights(0x3F);
+		TIMER = 0;
+	}
+	else if(SYSTEM_STATE==STATE_2)
+	{
+		SYSTEM_STATE = STATE_3;
+		set_lights(0x1F);
+		TIMER = 0;
+	}
+	else if(SYSTEM_STATE==STATE_3)
+	{
+		SYSTEM_STATE = STATE_4;
+		set_lights(0x0F);
+		TIMER = 0;
+	}
+	else if(SYSTEM_STATE==STATE_4)
+	{
+
+		SYSTEM_STATE = STATE_5;
+		set_lights(0x8F);
+		TIMER = 0;
+	}
+	else if(SYSTEM_STATE==STATE_5)
+	{
+		SYSTEM_STATE = STATE_6;
+		set_lights(0xCF);
+		TIMER = 0;
+	}
+	else if(SYSTEM_STATE==STATE_6)
+	{
+
+		SYSTEM_STATE = STATE_7;
+		set_lights(0xEF);
+		TIMER = 0;
+
+	}
+	else if(SYSTEM_STATE==STATE_7)
+	{
+		SYSTEM_STATE = IDLE_STATE;
+		set_lights(0xFF);
+		TIMER = 0;
+	}
+	else if(SYSTEM_STATE==TIMER_INCREMENT_MODE)
+	{
+	    if(SW2_p->SW_state==pressed)
+		{
+			TIMER_INTERVAL_DELAY+=60;
+			if(TIMER_INTERVAL_DELAY>=900)
+			{
+				TIMER_INTERVAL_DELAY=900;
+			}
+			set_lights(~((uint8_t) TIMER_INTERVAL_DELAY/60));
+		}
+		else if(SW3_p->SW_state==pressed)
+		{
+			TIMER_INTERVAL_DELAY-=60;
+			if(TIMER_INTERVAL_DELAY<60)
+			{
+				TIMER_INTERVAL_DELAY=60;
+			}
+			set_lights(~((uint8_t) TIMER_INTERVAL_DELAY/60));
+		}
+		else if(SW1_p==pressed||SW4_p==pressed)
+		{
+			SYSTEM_STATE = IDLE_STATE;
+		}
+	}
 }
+

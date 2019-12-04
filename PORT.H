@@ -39,7 +39,7 @@ sbit P1_7 = P1^7;
 
 
 // Port 2
-//sbit SW1 = P2^0;
+sbit SW1 = P2^0;
 sbit SW2 = P2^1;
 sbit SW3 = P2^2;
 sbit SW4 = P2^3;

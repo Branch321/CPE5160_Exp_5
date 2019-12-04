@@ -1,5 +1,6 @@
 "main.obj",
 "sEOS.obj",
-"Blinking_Lights.obj" 
+"Blinking_Lights.obj",
+"Buttons.obj" 
 TO "CPE5160_Exp_5" 
 RAMSIZE(256) 

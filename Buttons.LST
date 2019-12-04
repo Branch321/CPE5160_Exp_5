@@ -1,0 +1,114 @@
+C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 02:39:19 PAGE 1   
+
+
+C51 COMPILER V6.02, COMPILATION OF MODULE BUTTONS
+OBJECT MODULE PLACED IN .\Buttons.OBJ
+COMPILER INVOKED BY: C:\Keil\C51\BIN\C51.EXE .\Buttons.c DEBUG OBJECTEXTEND
+
+stmt level    source
+
+   1          #include "Buttons.h"
+   2          #include "AT89C51RC2.h"
+   3          #include "Blinking_lights.h"
+   4          
+   5          SW_values_t SW1_values_g,SW2_values_g,SW3_values_g,SW4_values_g;
+   6          
+   7          SW_values_t * Return_SW1_address(){
+   8   1      	return &SW1_values_g;
+   9   1      }
+  10          
+  11          SW_values_t * Return_SW2_address(){
+  12   1      	return &SW2_values_g;
+  13   1      }
+  14          
+  15          SW_values_t * Return_SW3_address(){
+  16   1      	return &SW3_values_g;
+  17   1      }
+  18          
+  19          SW_values_t * Return_SW4_address(){
+  20   1      	return &SW4_values_g;
+  21   1      }
+  22          
+  23          void Switch_Init(void)
+  24          {
+  25   1      	SW1_values_g.SW_mask=1<<0;
+  26   1      	SW1_values_g.debounce_time=0;
+  27   1      	SW1_values_g.SW_state=not_pressed;
+  28   1      
+  29   1      	SW2_values_g.SW_mask=1<<1;
+  30   1      	SW2_values_g.debounce_time=0;
+  31   1      	SW2_values_g.SW_state=not_pressed;
+  32   1      
+  33   1      	SW3_values_g.SW_mask=1<<2;
+  34   1      	SW3_values_g.debounce_time=0;
+  35   1      	SW3_values_g.SW_state=not_pressed;
+  36   1      
+  37   1      	SW4_values_g.SW_mask=1<<3;
+  38   1      	SW4_values_g.debounce_time=0;
+  39   1      	SW4_values_g.SW_state=not_pressed;
+  40   1      }
+  41          
+  42          void Read_Switch(SW_values_t * SW_input_p)
+  43          {
+  44   1      	if(SW_input_p->SW_state==not_pressed)
+  45   1      	{
+  46   2      		if((P2&SW_input_p->SW_mask)==0)
+  47   2      		{
+  48   3      			SW_input_p->debounce_time=0;
+  49   3      			SW_input_p->SW_state=debounce_p;
+  50   3      		}
+  51   2      	}
+  52   1      	else if(SW_input_p->SW_state==debounce_p)
+  53   1      	{
+  54   2      		SW_input_p->debounce_time+=interval;
+  55   2      		if(SW_input_p->debounce_time>=debounce_timer)
+C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 02:39:19 PAGE 2   
+
+  56   2      		{
+  57   3      			if((P2&SW_input_p->SW_mask)==0)
+  58   3      			{
+  59   4      				SW_input_p->SW_state=pressed;
+  60   4      			}
+  61   3      			else
+  62   3      			{
+  63   4      				SW_input_p->SW_state=not_pressed;
+  64   4      			}
+  65   3      		 }
+  66   2      	}
+  67   1      	else if(SW_input_p->SW_state==pressed)
+  68   1      	{
+  69   2      		if((P2&SW_input_p->SW_mask)==1)
+  70   2      		{
+  71   3      			SW_input_p->SW_state=debounce_r;
+  72   3      		}
+  73   2      	}
+  74   1      	else if(SW_input_p->SW_state==debounce_r)
+  75   1      	{
+  76   2      		SW_input_p->debounce_time+=interval;
+  77   2      		if(SW_input_p->debounce_time>=debounce_timer)
+  78   2      		{
+  79   3      			if((P2&SW_input_p->SW_mask)==1)
+  80   3      			{
+  81   4      				SW_input_p->SW_state=not_pressed;
+  82   4      			}
+  83   3      			else
+  84   3      			{
+  85   4      				SW_input_p->SW_state=held;
+  86   4      			}
+  87   3      		}
+  88   2      	 }
+  89   1      }
+
+
+MODULE INFORMATION:   STATIC OVERLAYABLE
+   CODE SIZE        =    205    ----
+   CONSTANT SIZE    =   ----    ----
+   XDATA SIZE       =   ----    ----
+   PDATA SIZE       =   ----    ----
+   DATA SIZE        =     12    ----
+   IDATA SIZE       =   ----    ----
+   BIT SIZE         =   ----    ----
+END OF MODULE INFORMATION.
+
+
+C51 COMPILATION COMPLETE.  0 WARNING(S),  0 ERROR(S)
