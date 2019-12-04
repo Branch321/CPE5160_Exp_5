@@ -1,4 +1,4 @@
-C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 07:49:34 PAGE 1   
+C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 17:45:22 PAGE 1   
 
 
 C51 COMPILER V6.02, COMPILATION OF MODULE BUTTONS
@@ -62,7 +62,7 @@ stmt level    source
   53   1      	{
   54   2      		SW_input_p->debounce_time+=interval;
   55   2      		if(SW_input_p->debounce_time>=debounce_timer)
-C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 07:49:34 PAGE 2   
+C51 COMPILER V6.02  BUTTONS                                                                12/04/2019 17:45:22 PAGE 2   
 
   56   2      		{
   57   3      			if((P2&SW_input_p->SW_mask)==0)
@@ -75,11 +75,11 @@ stmt level    source
   64   4      			}
   65   3      		 }
   66   2      	}
-  67   1      	else if(SW_input_p->SW_state==pressed)
+  67   1      	else if(SW_input_p->SW_state==held)
   68   1      	{
-  69   2      		if((P2&SW_input_p->SW_mask)==1)
+  69   2      		if((P2&SW_input_p->SW_mask)!=0)
   70   2      		{
-  71   3      			SW_input_p->SW_state=debounce_r;
+  71   3      			SW_input_p->SW_state = debounce_r;
   72   3      		}
   73   2      	}
   74   1      	else if(SW_input_p->SW_state==debounce_r)
@@ -87,7 +87,7 @@ stmt level    source
   76   2      		SW_input_p->debounce_time+=interval;
   77   2      		if(SW_input_p->debounce_time>=debounce_timer)
   78   2      		{
-  79   3      			if((P2&SW_input_p->SW_mask)==1)
+  79   3      			if((P2&SW_input_p->SW_mask)!=0)
   80   3      			{
   81   4      				SW_input_p->SW_state=not_pressed;
   82   4      			}
@@ -101,7 +101,7 @@ stmt level    source
 
 
 MODULE INFORMATION:   STATIC OVERLAYABLE
-   CODE SIZE        =    205    ----
+   CODE SIZE        =    198    ----
    CONSTANT SIZE    =   ----    ----
    XDATA SIZE       =   ----    ----
    PDATA SIZE       =   ----    ----

@@ -64,11 +64,11 @@ void Read_Switch(SW_values_t * SW_input_p)
 			}
 		 }
 	}
-	else if(SW_input_p->SW_state==pressed)
+	else if(SW_input_p->SW_state==held)
 	{
-		if((P2&SW_input_p->SW_mask)==1)
+		if((P2&SW_input_p->SW_mask)!=0)
 		{
-			SW_input_p->SW_state=debounce_r;
+			SW_input_p->SW_state = debounce_r;
 		}
 	}
 	else if(SW_input_p->SW_state==debounce_r)
@@ -76,7 +76,7 @@ void Read_Switch(SW_values_t * SW_input_p)
 		SW_input_p->debounce_time+=interval;
 		if(SW_input_p->debounce_time>=debounce_timer)
 		{
-			if((P2&SW_input_p->SW_mask)==1)
+			if((P2&SW_input_p->SW_mask)!=0)
 			{
 				SW_input_p->SW_state=not_pressed;
 			}

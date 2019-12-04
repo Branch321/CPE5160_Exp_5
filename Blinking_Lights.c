@@ -4,10 +4,9 @@
 #include <stdio.h>
 
 volatile states_t SYSTEM_STATE = IDLE_STATE;
-volatile uint32_t TIMER_INTERVAL_DELAY = 660;
+volatile uint32_t TIMER_INTERVAL_DELAY = 60;
 volatile uint32_t TIMER = 0;
-volatile bit strobe_forward = 0;
-volatile bit strobe_backward = 0;
+volatile uint8_t TIMER_NUMBER = 1;
 
 void set_lights(uint8_t light_config) {
 	light_config = light_config << 4;
@@ -36,15 +35,26 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		{
 			SYSTEM_STATE = STATE_1_L_to_R;
 			TIMER = 0;
+			SW1_p->SW_state=held;
+
 		}
 		else if(SW4_p->SW_state==pressed)
 		{
 			SYSTEM_STATE = STATE_1_R_to_L;
             TIMER = 0;
+			SW4_p->SW_state=held;
         }
-		else if(SW2_p->SW_state==pressed || SW3_p->SW_state == pressed)
+		else if(SW2_p->SW_state==pressed)
 		{
 			SYSTEM_STATE = TIMER_INCREMENT_MODE;
+			TIMER = 0;
+			SW2_p->SW_state=held;
+
+		}
+		else if(SW3_p->SW_state == pressed)
+		{
+			SYSTEM_STATE = TIMER_INCREMENT_MODE;
+			SW3_p->SW_state=held;
 			TIMER = 0;
 		}
 	}
@@ -59,6 +69,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		else if(SW1_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE;
+			SW1_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_2_L_to_R)
@@ -72,6 +83,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		else if(SW1_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE;
+			SW1_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_3_L_to_R)
@@ -85,6 +97,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		else if(SW1_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE;
+			SW1_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_4_L_to_R)
@@ -98,6 +111,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		else if(SW1_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE;
+			SW1_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_1_R_to_L)
@@ -111,6 +125,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		else if(SW4_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE;
+			SW4_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_2_R_to_L)
@@ -124,6 +139,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		else if(SW4_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE; 
+			SW4_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_3_R_to_L)
@@ -136,7 +152,8 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		}
 		else if(SW4_p->SW_state == pressed)
 		{
-			SYSTEM_STATE = IDLE_STATE; 
+			SYSTEM_STATE = IDLE_STATE;
+ 		    SW4_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_4_R_to_L)
@@ -150,30 +167,40 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 		else if(SW4_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE; 
+			SW4_p->SW_state = held;
 		}
 	}
 	else if(SYSTEM_STATE==TIMER_INCREMENT_MODE)
 	{
-	    set_lights(~((uint8_t) TIMER_INTERVAL_DELAY/60));
+	    set_lights(~TIMER_NUMBER);
+		TIMER_INTERVAL_DELAY = TIMER_NUMBER*60;
 	    if(SW2_p->SW_state==pressed)
 		{
-			TIMER_INTERVAL_DELAY+=60;
-			if(TIMER_INTERVAL_DELAY>=900)
+			TIMER_NUMBER++;
+			if(TIMER_NUMBER>=15)
 			{
-				TIMER_INTERVAL_DELAY=900;
+				TIMER_NUMBER=15;
 			}
+			SW2_p->SW_state = held;
 		}
 		else if(SW3_p->SW_state==pressed)
 		{
-			TIMER_INTERVAL_DELAY-=60;
-			if(TIMER_INTERVAL_DELAY<60)
+			TIMER_NUMBER--;
+			if(TIMER_NUMBER<=1)
 			{
-				TIMER_INTERVAL_DELAY=60;
+				TIMER_NUMBER=1;
 			}
+			SW3_p->SW_state = held;
 		}
-		else if(SW1_p==pressed||SW4_p==pressed)
+		else if(SW1_p->SW_state==pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE;
+			SW1_p->SW_state = held;
+		}
+		else if(SW4_p->SW_state==pressed)
+		{
+			SYSTEM_STATE = IDLE_STATE;
+			SW4_p->SW_state = held;
 		}
 	}
 }
