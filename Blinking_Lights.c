@@ -22,7 +22,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	SW2_p = Return_SW2_address();
 	SW3_p = Return_SW3_address();
 	SW4_p = Return_SW4_address();
-    	TIMER++;
+    TIMER++;
 
 	Read_Switch(SW1_p);
 	Read_Switch(SW2_p);
@@ -31,7 +31,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	
 	if(SYSTEM_STATE == IDLE_STATE)
 	{
-		set_lights(0xF);
+		set_lights(15);
 		if(SW1_p->SW_state==pressed)
 		{
 			SYSTEM_STATE = STATE_1_L_to_R;
@@ -47,10 +47,10 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	}
 	else if(SYSTEM_STATE == STATE_1_L_to_R)
 	{
-		set_lights(8);
+		set_lights(7);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
-			SYSTEM_STATE = STATE_2_L_TO_R;
+			SYSTEM_STATE = STATE_2_L_to_R;
 			TIMER=0;
 		}
 		else if(SW1_p->SW_state == pressed)
@@ -60,7 +60,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	}
 	else if(SYSTEM_STATE == STATE_2_L_to_R)
 	{
-		set_lights(0xC);
+		set_lights(3);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
 			SYSTEM_STATE = STATE_3_L_to_R;
@@ -73,10 +73,10 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	}
 	else if(SYSTEM_STATE == STATE_3_L_to_R)
 	{
-		set_lights(0xE);
+		set_lights(1);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
-			SYSTEM_STATE = STATE_4_L_to_r;
+			SYSTEM_STATE = STATE_4_L_to_R;
 			TIMER=0;
 		}
 		else if(SW1_p->SW_state == pressed)
@@ -86,7 +86,7 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	}
 	else if(SYSTEM_STATE == STATE_4_L_to_R)
 	{
-		set_lights(0xF);
+		set_lights(0);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
 			SYSTEM_STATE = STATE_1_L_to_R;
@@ -99,52 +99,52 @@ void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	}
 	else if(SYSTEM_STATE == STATE_1_R_to_L)
 	{
-		set_lights(1);
+		set_lights(14);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
 			SYSTEM_STATE = STATE_2_R_to_L;
 			TIMER=0;
 		}
-		else if(SW4_p->SW_state = pressed)
+		else if(SW4_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE;
 		}
 	}
 	else if(SYSTEM_STATE == STATE_2_R_to_L)
 	{
-		set_lights(3);
+		set_lights(12);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
 			SYSTEM_STATE = STATE_3_R_to_L;
 			TIMER=0;
 		}
-		else if(SW4_p->SW_state = pressed)
+		else if(SW4_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE; 
 		}
 	}
 	else if(SYSTEM_STATE == STATE_3_R_to_L)
 	{
-		set_lights(7);
+		set_lights(8);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
 			SYSTEM_STATE = STATE_4_R_to_L;
 			TIMER=0;
 		}
-		else if(SW4_p->SW_state = pressed)
+		else if(SW4_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE; 
 		}
 	}
 	else if(SYSTEM_STATE == STATE_4_R_to_L)
 	{
-		set_lights(15);
+		set_lights(0);
 		if(TIMER>=TIMER_INTERVAL_DELAY)
 		{
 			SYSTEM_STATE = STATE_1_R_to_L;
 			TIMER=0;
 		}
-		else if(SW4_p->SW_state = pressed)
+		else if(SW4_p->SW_state == pressed)
 		{
 			SYSTEM_STATE = IDLE_STATE; 
 		}
