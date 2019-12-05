@@ -4,7 +4,6 @@
 #include "main.h"
 #include "PORT.h"
 
-// possible system states
 typedef enum {
 	IDLE_STATE,
 	STATE_1_L_to_R,
@@ -26,8 +25,9 @@ typedef enum {
 	F_EDGE
 } b_states_t;
 
-void LED_State_Change();
-
+/*
+ *
+ */
 void set_lights(uint8_t light_config);
 
 #endif

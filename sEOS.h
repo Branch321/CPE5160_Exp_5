@@ -15,7 +15,6 @@
 void sEOS_init(uint8_t interval);
 
 /* Desc: Sets the microcontroller to an idle state
- *
 */
 void go_to_sleep(void);
 

@@ -13,6 +13,7 @@
 void main(void) {
     sEOS_init(1); // initialize sEOS interrupt at 1ms
 	Switch_Init();
+	// Write 1 to switches to init as input
 	SW1=1;
 	SW2=1;
 	SW3=1;

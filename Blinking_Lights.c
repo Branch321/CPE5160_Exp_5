@@ -7,13 +7,12 @@ volatile states_t SYSTEM_STATE = IDLE_STATE;
 volatile uint32_t TIMER_INTERVAL_DELAY = 60;
 volatile uint32_t TIMER = 0;
 volatile uint8_t TIMER_NUMBER = 1;
+SW_values_t * SW1_p, *SW2_p, *SW3_p, *SW4_p;
 
 void set_lights(uint8_t light_config) {
 	light_config = light_config << 4;
 	P2 = light_config|0x0F;
 }
-
-SW_values_t * SW1_p, *SW2_p, *SW3_p, *SW4_p;
 
 void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
 	TF2=0;

@@ -9,16 +9,11 @@
 #include "main.h"
 
 void sEOS_init(uint8_t interval) {
-    //uint32_t increments;
     uint16_t reload_16;
     uint8_t reload_8H;
 	uint8_t reload_8L;
 
-    //T2CON = 0x04; // load timer 2 control register
 	T2CON=0;
-    
-    // number of timer increments required (max 65536)
-    //increments = ((uint32_t)interval * (OSC_FREQ/1000)) / (uint32_t)OSC_PER_INST;
     
     reload_16 = (uint16_t)(65536UL - ((OSC_FREQ*interval)/(OSC_PER_INST*1000UL))); // 16 bit reload value
     
