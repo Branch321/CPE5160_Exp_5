@@ -1,3 +1,8 @@
+/* Names: Tyler Andrews, Brennan Campbell, Tyler Tetens
+ * Project: Experiment 5
+ * Class: Cpe5160
+ * Professor: Mr. Younger
+*/
 #include "Buttons.h"
 #include "AT89C51RC2.h"
 #include "Blinking_lights.h"

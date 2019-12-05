@@ -1,3 +1,8 @@
+/* Names: Tyler Andrews, Brennan Campbell, Tyler Tetens
+ * Project: Experiment 5
+ * Class: Cpe5160
+ * Professor: Mr. Younger
+*/
 #ifndef _BUTTONS_H
 #define _BUTTONS_H
 
