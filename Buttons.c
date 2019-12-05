@@ -2,6 +2,7 @@
 #include "AT89C51RC2.h"
 #include "Blinking_lights.h"
 
+// Buttons used throughout project
 SW_values_t SW1_values_g,SW2_values_g,SW3_values_g,SW4_values_g;
 
 SW_values_t * Return_SW1_address(){

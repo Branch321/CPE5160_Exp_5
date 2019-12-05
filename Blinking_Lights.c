@@ -3,30 +3,40 @@
 #include "Port.h"
 #include <stdio.h>
 
+// variable that holds the entire system state, defaults to IDLE_STATE
 volatile states_t SYSTEM_STATE = IDLE_STATE;
+// variable that determines time in ms to switch between LED states
 volatile uint32_t TIMER_INTERVAL_DELAY = 60;
+// tick counter for interrupt
 volatile uint32_t TIMER = 0;
+//  variable used to increment/decrement in TIMER_INCREMENT_MODE
 volatile uint8_t TIMER_NUMBER = 1;
+// pointers to buttons
 SW_values_t * SW1_p, *SW2_p, *SW3_p, *SW4_p;
 
+// function docs in header files
 void set_lights(uint8_t light_config) {
 	light_config = light_config << 4;
 	P2 = light_config|0x0F;
 }
 
 void blinking_lights_isr(void) interrupt TIMER_2_OVERFLOW {
-	TF2=0;
+	TF2=0; // clear flag
+
+	// grab addresses of buttons
 	SW1_p = Return_SW1_address();
 	SW2_p = Return_SW2_address();
 	SW3_p = Return_SW3_address();
 	SW4_p = Return_SW4_address();
-    TIMER++;
+    TIMER++; // increment tick counter at 1 ms intervals
 
+    // Read all the switches
 	Read_Switch(SW1_p);
 	Read_Switch(SW2_p);
 	Read_Switch(SW3_p);
 	Read_Switch(SW4_p);
-	
+
+	// Enter system state machine below
 	if(SYSTEM_STATE == IDLE_STATE)
 	{
 		set_lights(15);
